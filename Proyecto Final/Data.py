@@ -24,7 +24,7 @@ class Data:
     #end method
 
     def insert(self, varios, tabla, n):
-        if exist(varios[0][0], tabla):
+        if self.exist(varios[0][0], tabla):
             self.update(varios, tabla) #pending
         else:
             try:
@@ -54,7 +54,6 @@ class Data:
                     WHERE CODIGO = {varios[0][0]}'''
         #end condition
         try:
-            print(sql)
             self.cCursorSql.execute(self.sentencia)
             self.cConnect.commit()
             return "editado"
@@ -93,4 +92,19 @@ class Data:
         self.sentencia = """PRAGMA table_info({});""".format(tabla)
         return self.cCursorSql.execute(self.sentencia)
     #end method
+
+    def exist(self, value, tabla):
+        if tabla =="ESTUDIANTE":
+            self.sentencia= f"select * from '{tabla}' where ID_ESTUDIANTE={value}"
+            dataTable = self.cCursorSql.execute(self.sentencia).fetchone()
+            return True if(type(dataTable) is tuple) else False
+        elif tabla=="MATERIA":
+            self.sentencia= f"select * from '{tabla}' where CODIGO='{value}'"
+            dataTable = self.cCursorSql.execute(self.sentencia).fetchone()
+            return True if(type(dataTable) is tuple) else False
+        elif tabla=="CALIFICACIONES":
+            self.sentencia= f"select * from '{tabla}' where ID_CALIFICACION={value}"
+            dataTable = self.cCursorSql.execute(self.sentencia).fetchone()
+            return True if(type(dataTable) is tuple) else False
+#end method
 #end class

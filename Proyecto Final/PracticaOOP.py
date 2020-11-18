@@ -5,8 +5,11 @@ from tkinter import ttk
 import webbrowser
 from datetime import date 
 from Data import Data
+from InsertarRegistro import *
 
 class MyProgram:
+  
+
     def __init__(self, master):
         self.database = Data()
         self.master = master
@@ -45,6 +48,7 @@ class MyProgram:
     def materiaControl(self):
         codigo = StringVar()
         nombre = StringVar()
+        ist = InsertarRegistro()
         filewin = Toplevel(self.master) 
         Label(filewin,text = "Codigo").place(x=10, y=30)
         Label(filewin,text = "Nombre").place(x=10, y=60)
@@ -52,7 +56,7 @@ class MyProgram:
         TxtBoxCodigo=Entry(filewin, width=20, textvariable=codigo).place(x=100,y=30)
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nombre).place(x=100,y=60)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=10, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:ist.insertarM(codigo.get(),nombre.get())).place(x=10, y=120)
         botonModificar=Button(filewin, text = "Modificar", width= 14).place(x=120, y=120)
         botonBorrar=Button(filewin, text = "Borrar", width= 14,command=lambda:self.greet()).place(x=60, y=160)
 
@@ -64,6 +68,7 @@ class MyProgram:
         mat = StringVar()
         nom = StringVar()
         sex = StringVar()
+        ist = InsertarRegistro()
         filewin = Toplevel(self.master)
         Label(filewin,text = "Matricula").place(x=10, y=30)
         Label(filewin,text = "Nombre").place(x=10, y=60)
@@ -73,7 +78,7 @@ class MyProgram:
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nom).place(x=100,y=60)
         TxtBoxSexo=Entry(filewin, width=20, textvariable=sex).place(x=100,y=90)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=10, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:ist.insertarE(mat.get(),nom.get(),sex.get())).place(x=10, y=120)
         botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
 
@@ -91,6 +96,7 @@ class MyProgram:
         primerParcial = StringVar()
         segundoParcial = StringVar()
         examenFinal = StringVar()
+        ist = InsertarRegistro()
         filewin = Toplevel(self.master)
         Label(filewin,text = "Estudiante").place(x=10, y=10)
         Label(filewin,text = "Materia").place(x=260, y=10)
@@ -112,7 +118,7 @@ class MyProgram:
         TxtBoxSegundoParcial=Entry(filewin, width=20, textvariable=segundoParcial).place(x=100,y=90)
         TxtBoxExamenfinal=Entry(filewin, width=20, textvariable=examenFinal).place(x=350,y=70)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=100, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:ist.insertarC(idEstudiante.get(),idMateria.get(),practica1.get(), practica2.get(), foro1.get(), foro2.get(), primerParcial.get(), segundoParcial.get(), examenFinal.get())).place(x=100, y=120)
         botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=260, y=120)
         botonBorrar=Button(filewin, text = "Borrar", width= 14,command= lambda:self.greet()).place(x=180, y=160)
 
@@ -155,6 +161,7 @@ class MyProgram:
         filewin.geometry("400x300")
         filewin.mainloop()
     #end method
+      
 
     def dinamyFill(self, tabla, data):
         if tabla =="ESTUDIANTE":
@@ -170,7 +177,7 @@ class MyProgram:
         print("you clicked on id", item[0])
     #end method
 
-    def greet(self):
+    def greet(self):        
         print("Greetings!")
     #end methhod
 #end class

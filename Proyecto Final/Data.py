@@ -3,34 +3,34 @@ import sqlite3
 
 class Data:
     def __init__(self):
-        self.cConnect = sqlite3.connect("ESTUDIO")
-        self.cCursorSql = self.cConnect.cursor()
-        self.sentencia=""
+        self._cConnect = sqlite3.connect("ESTUDIO")
+        self._cCursorSql = self._cConnect.cursor()
+        self._sentencia=""
     #end _init
 
     def seek(self):
         #table 1
-        self.sentencia = "CREATE TABLE IF NOT EXISTS ESTUDIANTE (ID_ESTUDIANTE INTEGER PRIMARY KEY AUTOINCREMENT, MATRICULA INT NOT NULL, NOMBRE VARCHAR(15), SEXO NCHAR(1))"
-        self.cCursorSql.execute(self.sentencia)
+        self._sentencia = "CREATE TABLE IF NOT EXISTS ESTUDIANTE (ID_ESTUDIANTE INTEGER PRIMARY KEY AUTOINCREMENT, MATRICULA INT NOT NULL, NOMBRE VARCHAR(15), SEXO NCHAR(1))"
+        self._cCursorSql.execute(self._sentencia)
         #table 2
-        self.sentencia = "CREATE TABLE IF NOT EXISTS MATERIA (CODIGO VARCHAR(6), NOMBRE_MATERIA VARCHAR(15))"
-        self.cCursorSql.execute(self.sentencia)
+        self._sentencia = "CREATE TABLE IF NOT EXISTS MATERIA (CODIGO VARCHAR(6), NOMBRE_MATERIA VARCHAR(15))"
+        self._cCursorSql.execute(self._sentencia)
         #table 3
-        self.sentencia = '''CREATE TABLE IF NOT EXISTS CALIFICACIONES (ID_CALIFICACION INTEGER PRIMARY KEY AUTOINCREMENT, ID_ESTUDIANTE INTEGER, 
+        self._sentencia = '''CREATE TABLE IF NOT EXISTS CALIFICACIONES (ID_CALIFICACION INTEGER PRIMARY KEY AUTOINCREMENT, ID_ESTUDIANTE INTEGER, 
         ID_MATERIA VARCHAR(6), PRACTICA1 INT, PRACTICA2 INT, FORO1 INT, FORO2 INT, PRIMER_PARCIAL INT, SEGUNDO_PARCIAL INT, EXAMEN_FINAL INT,
         FOREIGN KEY(ID_ESTUDIANTE) REFERENCES ESTUDIANTE(ID_ESTUDIANTE),
         FOREIGN KEY(ID_MATERIA) REFERENCES MATERIA(CODIGO))'''
-        self.cCursorSql.execute(self.sentencia)
+        self._cCursorSql.execute(self._sentencia)
     #end method
 
     def insert(self, varios, tabla, n):
         if self.exist(varios[0][0], tabla):
-            self.update(varios, tabla) #pending
+            return self.update(varios, tabla) #ready
         else:
             try:
-                self.sentencia=f"INSERT INTO {tabla} VALUES ({self.limit(n)})"
-                self.cCursorSql.executemany(self.sentencia, varios)
-                self.cConnect.commit()
+                self._sentencia=f"INSERT INTO {tabla} VALUES ({self.limit(n)})"
+                self._cCursorSql.executemany(self._sentencia, varios)
+                self._cConnect.commit()
                 return 'insertado'
             except:
                 return 'Error'
@@ -39,23 +39,23 @@ class Data:
 
     def update(self, varios, tabla):
         if tabla =="ESTUDIANTE":
-            self.sentencia=f'''UPDATE {tabla}
+            self._sentencia=f'''UPDATE {tabla}
                     SET MATRICULA = {varios[0][0]} ,
                         NOMBRE = '{varios[0][2]}' 
                     WHERE ID_ESTUDIANTE = {varios[0][0]}'''
         elif tabla=="MATERIA":
-            self.sentencia=f'''UPDATE {tabla}
+            self._sentencia=f'''UPDATE {tabla}
                     SET  NOMBRE_MATERIA = '{varios[0][1]}'
                     WHERE CODIGO = "{varios[0][0]}"'''
         elif tabla=="CALIFICACIONES":
-            self.sentencia=f'''UPDATE {tabla}
+            self._sentencia=f'''UPDATE {tabla}
                     SET CODIGO = {varios[0][0]} ,
                         NOMBRE_MATERIA = {varios[0][1]} 
                     WHERE CODIGO = {varios[0][0]}'''
         #end condition
         try:
-            self.cCursorSql.execute(self.sentencia)
-            self.cConnect.commit()
+            self._cCursorSql.execute(self._sentencia)
+            self._cConnect.commit()
             return "editado"
         except:
             return "error"
@@ -63,17 +63,22 @@ class Data:
     #end method
 
     def consultar(self, tabla):
-        self.sentencia = f"select * from '{tabla}'"
-        return self.cCursorSql.execute(self.sentencia).fetchall()
+        self._sentencia = f"select * from '{tabla}'"
+        return self._cCursorSql.execute(self._sentencia).fetchall()
+    #end method
+
+    def consultarById(self, tabla, field, id):
+        self._sentencia = f"select * from '{tabla}' where {field}={id}" if(tabla!='MATERIA') else f"select * FROM {tabla} WHERE {field}='{_id}'"
+        return self._cCursorSql.execute(self._sentencia).fetchone()
     #end method
 
     def delete(self,_id, tabla, field):
         if _id!="":
             try:
-                self.sentencia=f"DELETE FROM {tabla} WHERE {field}={_id}" if(tabla!='MATERIA') else f"DELETE FROM {tabla} WHERE {field}='{_id}'"
-                print(self.sentencia)
-                self.cCursorSql.execute(self.sentencia)
-                self.cConnect.commit()
+                self._sentencia=f"DELETE FROM {tabla} WHERE {field}={_id}" if(tabla!='MATERIA') else f"DELETE FROM {tabla} WHERE {field}='{_id}'"
+                print(self._sentencia)
+                self._cCursorSql.execute(self._sentencia)
+                self._cConnect.commit()
                 return 'eliminado'
             except:
                 return 'Error'
@@ -81,7 +86,7 @@ class Data:
             return 'No valido'
     #end method
 
-    def limit(n):
+    def limit(self, n):
         texto=''
         for i in range(0,n):
             texto=texto=texto+'?,' if(i<(n-1)) else texto+'?'
@@ -89,22 +94,22 @@ class Data:
     #end method
 
     def infotabla(self,tabla):
-        self.sentencia = """PRAGMA table_info({});""".format(tabla)
-        return self.cCursorSql.execute(self.sentencia)
+        self._sentencia = """PRAGMA table_info({});""".format(tabla)
+        return self._cCursorSql.execute(self._sentencia)
     #end method
 
     def exist(self, value, tabla):
         if tabla =="ESTUDIANTE":
-            self.sentencia= f"select * from '{tabla}' where ID_ESTUDIANTE={value}"
-            dataTable = self.cCursorSql.execute(self.sentencia).fetchone()
+            self._sentencia= f"select * from '{tabla}' where ID_ESTUDIANTE={value}"
+            dataTable = self._cCursorSql.execute(self._sentencia).fetchone()
             return True if(type(dataTable) is tuple) else False
         elif tabla=="MATERIA":
-            self.sentencia= f"select * from '{tabla}' where CODIGO='{value}'"
-            dataTable = self.cCursorSql.execute(self.sentencia).fetchone()
+            self._sentencia= f"select * from '{tabla}' where CODIGO='{value}'"
+            dataTable = self._cCursorSql.execute(self._sentencia).fetchone()
             return True if(type(dataTable) is tuple) else False
         elif tabla=="CALIFICACIONES":
-            self.sentencia= f"select * from '{tabla}' where ID_CALIFICACION={value}"
-            dataTable = self.cCursorSql.execute(self.sentencia).fetchone()
+            self._sentencia= f"select * from '{tabla}' where ID_CALIFICACION={value}"
+            dataTable = self._cCursorSql.execute(self._sentencia).fetchone()
             return True if(type(dataTable) is tuple) else False
 #end method
 #end class

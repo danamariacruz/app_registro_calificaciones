@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button
+from tkinter import Tk, Label, Button, messagebox
 from tkinter import *
 from tkinter.ttk import Treeview
 from tkinter import ttk
@@ -6,6 +6,7 @@ import webbrowser
 from datetime import date 
 from Data import Data
 from InsertarRegistro import *
+from Alumno import Alumno
 
 class MyProgram:
   
@@ -45,7 +46,7 @@ class MyProgram:
         # self.close_button.pack()
     #end _init
 
-    def materiaControl(self):
+    def materiaControl(self, id=0):
         codigo = StringVar()
         nombre = StringVar()
         ist = InsertarRegistro()
@@ -64,7 +65,7 @@ class MyProgram:
         filewin.mainloop()
     #end method
 
-    def estudianteControl(self):
+    def estudianteControl(self, id=0):
         mat = StringVar()
         nom = StringVar()
         sex = StringVar()
@@ -82,11 +83,21 @@ class MyProgram:
         botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
 
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),sex.get()])).place(x=10, y=120)
+        #botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
+        #botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
+        if id!=0:
+            data = self.database.consultarById("ESTUDIANTE","ID_ESTUDIANTE",id)
+            print(data[0])
+            mat.set(data[1])
+            nom.set(data[2])
+            sex.set(data[3])
+        #end condition 
         filewin.geometry("250x200")
         filewin.mainloop()
     #end method   
 
-    def calificacionControl(self):
+    def calificacionControl(self, id=0):
         idEstudiante = StringVar()
         idMateria = StringVar()
         practica1 = StringVar()
@@ -158,7 +169,9 @@ class MyProgram:
         scrollbar.configure(command=self.router_tree_view.yview)
         scrollbar.pack(side="right", fill="y")
         self.router_tree_view.config(yscrollcommand=scrollbar.set)
-        filewin.geometry("400x300")
+        botonEliminar=Button(filewin, text = "Eliminar", width= 14, command= lambda:self.tableItemDelete(tabla,filewin)).place(x=20, y=250)
+        botonEditar=Button(filewin, text = "Editar", width= 14, command=lambda:self.tableItemEdit(tabla, filewin)).place(x=150, y=250)
+        filewin.geometry(self.set_dimension(tabla))
         filewin.mainloop()
     #end method
       
@@ -172,13 +185,71 @@ class MyProgram:
             return (data[0], data[1], data[2], data[3],data[4],data[5],data[6],data[7],data[8],data[9])
     #end method
 
-    def itemEvent(self, item):
+    def set_dimension(self, tabla):
+        dimension ="700x300"
+        if tabla=="MATERIA":
+            dimension="400x300"
+        elif tabla=="CALIFICACIONES":
+            dimension="800x300"
+        return dimension
+    #end method
+
+    def itemEvent(self):
         item = self.router_tree_view.selection()#[0] # now you got the item on that tree
         print("you clicked on id", item[0])
     #end method
 
-    def greet(self):        
-        print("Greetings!")
+    def tableItemDelete(self, tabla, f):
+        item = self.router_tree_view.selection()#[0] # now you got the item on that tree
+        if len(item)>0:
+            print("you clicked on id", item[0])
+            if tabla == "ESTUDIANTE":
+                data = self.database.delete(item[0], tabla, 'ID_ESTUDIANTE')
+                messagebox.showinfo(title='Informacion', message=data)
+                f.destroy()
+            elif tabla == 'MATERIA':
+                data = self.database.delete(item[0], tabla, 'CODIGO')
+                messagebox.showinfo(title='Informacion', message=data)
+                f.destroy()
+            else:
+                data = self.database.delete(item[0], tabla, 'ID_CALIFICACION')
+                messagebox.showinfo(title='Informacion', message=data)
+                f.destroy()
+        else:
+            messagebox.showinfo(title='Informacion', message='Seleccione algo')
+    #end method
+
+    def tableItemEdit(self, tabla, f):
+        item = self.router_tree_view.selection()#[0] # now you got the item on that tree
+        if len(item)>0:
+            print("you clicked on id", item[0])
+            if tabla == "ESTUDIANTE":
+                f.destroy()
+                self.estudianteControl(item[0])
+                #print(self.database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
+            elif tabla == 'MATERIA':
+                f.destroy()
+                self.materiaControl(item[0])
+                # print(self.database.delete(item[0], tabla, 'CODIGO'))
+            else:
+                f.destroy()
+                self.calificacionControl(item[0])
+                # print(self.database.delete(item[0], tabla, 'ID_CALIFICACION'))
+        else:
+            messagebox.showinfo(title='Informacion', message='Seleccione algo')
+    #end method
+
+    def insert_estudiante(self,values):
+        dic = {'data':values,'notas':[0,0,0,0,0]}
+        alumno = Alumno(dic)
+        # print(alumno.is_valid())
+        if alumno.is_valid():
+            data = self.database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
+            messagebox.showinfo(title='Informacion', message=data)
+    #end method
+
+    def greet(self):
+        messagebox.showinfo(title='Informacion', message='Greetings!')
     #end methhod
 #end class
 

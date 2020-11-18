@@ -43,7 +43,7 @@ class MyProgram:
         # self.close_button.pack()
     #end _init
 
-    def materiaControl(self):
+    def materiaControl(self, id=0):
         codigo = StringVar()
         nombre = StringVar()
         filewin = Toplevel(self.master) 
@@ -54,14 +54,14 @@ class MyProgram:
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nombre).place(x=100,y=60)
         
         botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=10, y=120)
-        botonModificar=Button(filewin, text = "Modificar", width= 14).place(x=120, y=120)
-        botonBorrar=Button(filewin, text = "Borrar", width= 14,command=lambda:self.greet()).place(x=60, y=160)
+        # botonModificar=Button(filewin, text = "Modificar", width= 14).place(x=120, y=120)
+        # botonBorrar=Button(filewin, text = "Borrar", width= 14,command=lambda:self.greet()).place(x=60, y=160)
 
         filewin.geometry("250x200")
         filewin.mainloop()
     #end method
 
-    def estudianteControl(self):
+    def estudianteControl(self, id=0):
         mat = StringVar()
         nom = StringVar()
         sex = StringVar()
@@ -75,14 +75,17 @@ class MyProgram:
         TxtBoxSexo=Entry(filewin, width=20, textvariable=sex).place(x=100,y=90)
         
         botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),sex.get()])).place(x=10, y=120)
-        botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
-        botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
-
+        #botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
+        #botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
+        if id!=0:
+            #logica aqui
+            a=0
+        #end condition 
         filewin.geometry("250x200")
         filewin.mainloop()
     #end method   
 
-    def calificacionControl(self):
+    def calificacionControl(self, id=0):
         idEstudiante = StringVar()
         idMateria = StringVar()
         practica1 = StringVar()
@@ -114,8 +117,8 @@ class MyProgram:
         TxtBoxExamenfinal=Entry(filewin, width=20, textvariable=examenFinal).place(x=350,y=70)
         
         botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=100, y=120)
-        botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=260, y=120)
-        botonBorrar=Button(filewin, text = "Borrar", width= 14,command= lambda:self.greet()).place(x=180, y=160)
+        # botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=260, y=120)
+        # botonBorrar=Button(filewin, text = "Borrar", width= 14,command= lambda:self.greet()).place(x=180, y=160)
 
         filewin.geometry("480x200")
         filewin.mainloop()  
@@ -153,7 +156,8 @@ class MyProgram:
         scrollbar.configure(command=self.router_tree_view.yview)
         scrollbar.pack(side="right", fill="y")
         self.router_tree_view.config(yscrollcommand=scrollbar.set)
-        botonInsertar=Button(filewin, text = "Eliminar", width= 14, command= lambda:self.tableItemClick(tabla)).place(x=20, y=250)
+        botonEliminar=Button(filewin, text = "Eliminar", width= 14, command= lambda:self.tableItemDelete(tabla,filewin)).place(x=20, y=250)
+        botonEditar=Button(filewin, text = "Editar", width= 14, command=lambda:self.tableItemEdit(table, filewin)).place(x=150, y=250)
         filewin.geometry(self.set_dimension(tabla))
         filewin.mainloop()
     #end method
@@ -181,15 +185,37 @@ class MyProgram:
         print("you clicked on id", item[0])
     #end method
 
-    def tableItemClick(self, tabla):
+    def tableItemDelete(self, tabla,f):
         item = self.router_tree_view.selection()#[0] # now you got the item on that tree
-        print("you clicked on id", item[0])
-        if tabla == "ESTUDIANTE":
-            print(self.database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
-        elif tabla == 'MATERIA':
-            print(self.database.delete(item[0], tabla, 'CODIGO'))
+        if len(item)>0:
+            print("you clicked on id", item[0])
+            if tabla == "ESTUDIANTE":
+                print(self.database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
+            elif tabla == 'MATERIA':
+                print(self.database.delete(item[0], tabla, 'CODIGO'))
+            else:
+                print(self.database.delete(item[0], tabla, 'ID_CALIFICACION'))
+            f.destroy()
         else:
-            print(self.database.delete(item[0], tabla, 'ID_CALIFICACION'))
+            print('seleccione algo')
+    #end method
+
+    def tableItemEdit(self, table, f):
+        item = self.router_tree_view.selection()#[0] # now you got the item on that tree
+        if len(item)>0:
+            print("you clicked on id", item[0])
+            if tabla == "ESTUDIANTE":
+                self.estudianteControl(item[0])
+                #print(self.database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
+            elif tabla == 'MATERIA':
+                self.materiaControl(item[0])
+                # print(self.database.delete(item[0], tabla, 'CODIGO'))
+            else:
+                self.calificacionControl(item[0])
+                # print(self.database.delete(item[0], tabla, 'ID_CALIFICACION'))
+            f.destroy()
+        else:
+            print('seleccione algo')
     #end method
 
     def insert_estudiante(self,values):

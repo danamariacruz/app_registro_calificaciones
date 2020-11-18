@@ -1,11 +1,11 @@
 class Notas:
   
   def __init__(self, list):
-    self.set_ppractica(list[1])
-    self.set_spractica(list[2])
-    self.set_pparcial(list[3])
-    self.set_sparcial(list[4])
-    self.set_final(list[5])
+    self.set_ppractica(list[0])
+    self.set_spractica(list[1])
+    self.set_pparcial(list[2])
+    self.set_sparcial(list[3])
+    self.set_final(list[4])
   #end ctr
 
   def set_ppractica(self, value):

@@ -81,7 +81,7 @@ class Data:
             return 'No valido'
     #end method
 
-    def limit(n):
+    def limit(self, n):
         texto=''
         for i in range(0,n):
             texto=texto=texto+'?,' if(i<(n-1)) else texto+'?'

@@ -3,10 +3,13 @@ from Calculo import Calculo
 
 class Alumno:
 
-  def __init__(self,dic, matricula):
-    self._matricula=matricula
-    self._nombre=dic[matricula][0]
-    self._nota= Notas(dic[matricula])
+  def __init__(self, dic):
+    # formato del diccionario
+    # dic ={'data':['20190506','juan','M'],'notas':[99,99,99,99,99]}
+    self._matricula=dic['data'][0]
+    self._nombre=dic['data'][1]
+    self._sexo=dic['data'][2]
+    self._nota= Notas(dic['notas'])
     self._calculo= Calculo(self._nota)
     #TO DO
     # add method of api +plus
@@ -18,6 +21,25 @@ class Alumno:
 
   def get_matricula(self):
     return self._matricula
+  #end method
+
+  def get_nombre(self):
+    return self._nombre
+  #end method
+
+  def get_sexo(self):
+    return self._sexo
+  #end method
+
+  def is_valid(self):
+    valido= True
+    if self._matricula=='' or len(self._matricula)!=8:
+      valido=False
+    if self._nombre=='':
+      valido=False
+    if self._sexo=='':
+      valido=False
+    return valido
   #end method
 
   def __str__(self):

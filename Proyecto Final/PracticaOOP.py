@@ -5,6 +5,7 @@ from tkinter import ttk
 import webbrowser
 from datetime import date 
 from Data import Data
+from Alumno import Alumno
 
 class MyProgram:
     def __init__(self, master):
@@ -73,7 +74,7 @@ class MyProgram:
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nom).place(x=100,y=60)
         TxtBoxSexo=Entry(filewin, width=20, textvariable=sex).place(x=100,y=90)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=10, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),sex.get()])).place(x=10, y=120)
         botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
 
@@ -152,7 +153,8 @@ class MyProgram:
         scrollbar.configure(command=self.router_tree_view.yview)
         scrollbar.pack(side="right", fill="y")
         self.router_tree_view.config(yscrollcommand=scrollbar.set)
-        filewin.geometry("400x300")
+        botonInsertar=Button(filewin, text = "Eliminar", width= 14, command= lambda:self.tableItemClick(tabla)).place(x=20, y=250)
+        filewin.geometry(self.set_dimension(tabla))
         filewin.mainloop()
     #end method
 
@@ -165,9 +167,37 @@ class MyProgram:
             return (data[0], data[1], data[2], data[3],data[4],data[5],data[6],data[7],data[8],data[9])
     #end method
 
-    def itemEvent(self, item):
+    def set_dimension(self, tabla):
+        dimension ="700x300"
+        if tabla=="MATERIA":
+            dimension="400x300"
+        elif tabla=="CALIFICACIONES":
+            dimension="800x300"
+        return dimension
+    #end method
+
+    def itemEvent(self):
         item = self.router_tree_view.selection()#[0] # now you got the item on that tree
         print("you clicked on id", item[0])
+    #end method
+
+    def tableItemClick(self, tabla):
+        item = self.router_tree_view.selection()#[0] # now you got the item on that tree
+        print("you clicked on id", item[0])
+        if tabla == "ESTUDIANTE":
+            print(self.database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
+        elif tabla == 'MATERIA':
+            print(self.database.delete(item[0], tabla, 'CODIGO'))
+        else:
+            print(self.database.delete(item[0], tabla, 'ID_CALIFICACION'))
+    #end method
+
+    def insert_estudiante(self,values):
+        dic = {'data':values,'notas':[0,0,0,0,0]}
+        alumno = Alumno(dic)
+        print(alumno.is_valid())
+        if alumno.is_valid():
+            print(self.database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4))
     #end method
 
     def greet(self):

@@ -41,7 +41,8 @@ class Data:
         if tabla =="ESTUDIANTE":
             self._sentencia=f'''UPDATE {tabla}
                     SET MATRICULA = {varios[0][0]} ,
-                        NOMBRE = '{varios[0][2]}' 
+                        NOMBRE = '{varios[0][2]}' ,
+                        SEXO = '{varios[0][3]}'
                     WHERE ID_ESTUDIANTE = {varios[0][0]}'''
         elif tabla=="MATERIA":
             self._sentencia=f'''UPDATE {tabla}

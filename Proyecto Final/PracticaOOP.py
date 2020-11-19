@@ -269,9 +269,9 @@ class MyProgram:
     #end method
 
     def insert_estudiante(self,values):
-        dic = {'data':values,'notas':[0,0,0,0,0]}
+        dic = {'data':values,'notas':[0,0,0,0,0,0,0]}
         alumno = Alumno(dic)
-        # print(alumno.is_valid())
+        print(dic['data'])
         if alumno.is_valid():
             data = self._database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
             messagebox.showinfo(title='Informacion', message=data)

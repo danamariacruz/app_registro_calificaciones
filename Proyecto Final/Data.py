@@ -49,9 +49,16 @@ class Data:
                     WHERE CODIGO = "{varios[0][0]}"'''
         elif tabla=="CALIFICACIONES":
             self._sentencia=f'''UPDATE {tabla}
-                    SET CODIGO = {varios[0][0]} ,
-                        NOMBRE_MATERIA = {varios[0][1]} 
-                    WHERE CODIGO = {varios[0][0]}'''
+                    SET ID_ESTUDIANTE ={varios[0][1]},
+                        ID_MATERIA = '{varios[0][2]}' ,
+                        PRACTICA1 = {varios[0][3]} ,
+                        PRACTICA2 = {varios[0][4]} ,
+                        FORO1 = {varios[0][5]} ,
+                        FORO2 = {varios[0][6]} ,
+                        PRIMER_PARCIAL = {varios[0][7]} ,
+                        SEGUNDO_PARCIAL = {varios[0][8]} ,
+                        EXAMEN_FINAL = {varios[0][9]}
+                    WHERE ID_CALIFICACION = {varios[0][0]}'''
         #end condition
         try:
             self._cCursorSql.execute(self._sentencia)

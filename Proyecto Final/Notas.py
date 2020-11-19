@@ -5,9 +5,9 @@ class Notas:
     self.set_spractica(list[1])
     self.set_pforo(list[2])
     self.set_sforo(list[3])
-    self.set_sparcial(list[4])
+    self.set_pparcial(list[4])
     self.set_sparcial(list[5])
-    self.set_final(list[4])
+    self.set_final(list[6])
   #end ctr
 
   def set_ppractica(self, value):
@@ -65,6 +65,25 @@ class Notas:
 
   def get_final(self):
     return self._final
+  #end method
+
+  def is_valid(self):
+    valido = True
+    if self.get_ppractica()==''or int(self.get_ppractica()) < 0 or int(self.get_ppractica()) > 100:
+      valido=False
+    if self.get_spractica()=='' or int(self.get_spractica()) < 0 or int(self.get_spractica()) > 100:
+      valido=False
+    if self.get_pforo()=='' or int(self.get_pforo()) < 0 or int(self.get_pforo()) > 100:
+      valido=False
+    if self.get_sforo()=='' or int(self.get_sforo()) < 0 or int(self.get_sforo()) > 100:
+      valido=False
+    if self.get_pparcial()=='' or int(self.get_pparcial()) < 0 or int(self.get_pparcial()) > 100:
+      valido=False
+    if self.get_sparcial()=='' or int(self.get_sparcial()) < 0 or int(self.get_sparcial()) > 100:
+      valido=False
+    if self.get_final()=='' or int(self.get_final()) < 0 or int(self.get_final()) > 100:
+      valido=False
+    return valido
   #end method
   
 #end class

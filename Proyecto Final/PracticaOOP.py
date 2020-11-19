@@ -3,9 +3,10 @@ from tkinter import *
 from tkinter.ttk import Treeview
 from tkinter import ttk
 import webbrowser
-from datetime import date 
+from datetime import datetime 
 from Data import Data
 from Alumno import Alumno
+from Notas import Notas
 
 class MyProgram:
     def __init__(self, master):
@@ -117,8 +118,8 @@ class MyProgram:
         Label(filewin,text = "Examen Final").place(x=260, y=70)
 
         # TxtBoxEstudiante=Entry(filewin, width=20, textvariable=idEstudiante).place(x=100,y=10)
-        CbBoxEstudiante = ttk.Combobox(filewin, state='readonly',values=self.get_dataCombo('ESTUDIANTE')).place(x=100,y=10)
-        CbBoxMateria = ttk.Combobox(filewin, state='readonly',values=self.get_dataCombo('MATERIA')).place(x=350,y=10)
+        CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idEstudiante, values=self.get_dataCombo('ESTUDIANTE')).place(x=100,y=10)
+        CbBoxMateria = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=350,y=10)
         # TxtBoxMateria1=Entry(filewin, width=20, textvariable=idMateria).place(x=350,y=10)
         TxtBoxPractica1=Entry(filewin, width=20, textvariable=practica1).place(x=100,y=30)
         TxtBoxPractica2=Entry(filewin, width=20, textvariable=practica2).place(x=100,y=50)
@@ -128,10 +129,22 @@ class MyProgram:
         TxtBoxSegundoParcial=Entry(filewin, width=20, textvariable=segundoParcial).place(x=100,y=90)
         TxtBoxExamenfinal=Entry(filewin, width=20, textvariable=examenFinal).place(x=350,y=70)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_calificaciones([])).place(x=100, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_calificaciones(id if(id!=0) else 0,[idEstudiante.get(),idMateria.get()],[practica1.get(),practica2.get(),foro1.get(),foro2.get(),primerParcial.get(),segundoParcial.get(),examenFinal.get()])).place(x=100, y=120)
         # botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=260, y=120)
         # botonBorrar=Button(filewin, text = "Borrar", width= 14,command= lambda:self.greet()).place(x=180, y=160)
-
+        if id!=0:
+            data = self._database.consultarById("CALIFICACIONES","ID_CALIFICACION",id)
+            print(data)
+            idEstudiante.set(data[1])
+            idMateria.set(data[2])
+            practica1.set(data[3])
+            practica2.set(data[4])
+            foro1.set(data[5])
+            foro2.set(data[6])
+            primerParcial.set(data[7])
+            segundoParcial.set(data[8])
+            examenFinal.set(data[9])
+        #end condition 
         filewin.geometry("500x200")
         filewin.mainloop()  
     #end method
@@ -254,8 +267,19 @@ class MyProgram:
             messagebox.showinfo(title='Informacion', message='Datos no validos')
     #end method
 
-    def insert_calificaciones(self, values):
-        v=0
+    def insert_calificaciones(self,editing, info, values):
+        # dic = {'data':['','',''],'notas':values}
+        nota = Notas(values)
+        print(info)
+        print(values)
+        now = datetime.now()
+        timestamp = datetime.timestamp(now)
+        id = str(timestamp)
+        if nota.is_valid() and info[0]!="" and info[1]!='':
+            data = self._database.insert([(editing if(editing!=0) else id[11:17],info[0],info[1],values[0],values[1],values[2],values[3],values[4],values[5],values[6])], "CALIFICACIONES",10)
+            messagebox.showinfo(title='Informacion', message=data)
+        else:  
+            messagebox.showinfo(title='Informacion', message='Datos no validos')
     #end method
 
     def greet(self):

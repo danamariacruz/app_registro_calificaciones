@@ -5,7 +5,7 @@ class Alumno:
 
   def __init__(self, dic):
     # formato del diccionario
-    # dic ={'data':['20190506','juan','M'],'notas':[99,99,99,99,99]}
+    # dic ={'data':['20190506','juan','M'],'notas':[99,99,99,99,99,99,99]}
     self._matricula=dic['data'][0]
     self._nombre=dic['data'][1]
     self._sexo=dic['data'][2]

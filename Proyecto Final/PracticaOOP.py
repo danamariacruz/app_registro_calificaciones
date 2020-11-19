@@ -7,6 +7,7 @@ from datetime import datetime
 from Data import Data
 from Alumno import Alumno
 from Notas import Notas
+from Reporte import Reporte
 
 class MyProgram:
     def __init__(self, master):
@@ -34,6 +35,11 @@ class MyProgram:
         self.calificacionesmenu.add_command(label="Consultar", command=lambda:self.consultar("CALIFICACIONES"))
         self.calificacionesmenu.add_command(label="Modificar", command=lambda:self.calificacionControl())
         self.menubar.add_cascade(label="Calificaciones", menu=self.calificacionesmenu)
+        #menu 4
+        self.reportesmenu = Menu(self.menubar, tearoff=0)
+        self.reportesmenu.add_command(label="Reporte html", command=lambda:self.reporteControl())
+        self.menubar.add_cascade(label="Reportes", menu=self.reportesmenu)
+
         master.config(menu=self.menubar)
         master.geometry("400x300")
         # self.label = Label(master, text="This is our first GUI!")
@@ -45,6 +51,18 @@ class MyProgram:
         # self.close_button = Button(master, text="Close", command=master.quit)
         # self.close_button.pack()
     #end _init
+
+    def reporteControl(self):
+        idEstudiante =StringVar()
+        filewin = Toplevel(self._master) 
+
+        Label(filewin,text = "Estudiante").place(x=10, y=30)
+        CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idEstudiante, values=self.get_dataCombo('ESTUDIANTE')).place(x=100,y=30)
+        botonReportee=Button(filewin, text = "Reporte html", width= 14, command= lambda:self.reporte(idEstudiante.get())).place(x=100, y=80)
+
+        filewin.geometry("250x200")
+        filewin.mainloop()
+    #end method
 
     def materiaControl(self, id=0):
         codigo = StringVar()
@@ -257,29 +275,33 @@ class MyProgram:
         if alumno.is_valid():
             data = self._database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
             messagebox.showinfo(title='Informacion', message=data)
+            self._estudiantes = self._database.consultar('ESTUDIANTE')
     #end method
 
     def insert_materia(self, values):
         if values[0]!="" and values[0]!="":
             data = self._database.insert([(values[0], values[1])], 'MATERIA',2)
             messagebox.showinfo(title='Informacion', message=data)
+            self._materias = self._database.consultar('MATERIA')
         else:
             messagebox.showinfo(title='Informacion', message='Datos no validos')
     #end method
 
     def insert_calificaciones(self,editing, info, values):
         # dic = {'data':['','',''],'notas':values}
+        ncalif = self._database.calificacionByEstudiante(info[0])
+        print(len(ncalif))
         nota = Notas(values)
         print(info)
         print(values)
         now = datetime.now()
         timestamp = datetime.timestamp(now)
         id = str(timestamp)
-        if nota.is_valid() and info[0]!="" and info[1]!='':
+        if nota.is_valid() and info[0]!="" and info[1]!='' and len(ncalif)<4:
             data = self._database.insert([(editing if(editing!=0) else id[11:17],info[0],info[1],values[0],values[1],values[2],values[3],values[4],values[5],values[6])], "CALIFICACIONES",10)
             messagebox.showinfo(title='Informacion', message=data)
         else:  
-            messagebox.showinfo(title='Informacion', message='Datos no validos')
+            messagebox.showinfo(title='Informacion', message='Ya tiene 3 materias.' if(len(ncalif)==3) else 'Datos no validos')
     #end method
 
     def greet(self):
@@ -296,6 +318,10 @@ class MyProgram:
         return data
     #end method
 
+    def reporte(self, m):
+        report = Reporte(m)
+        report.get_report()
+    #end method
 #end class
 
 root = Tk()

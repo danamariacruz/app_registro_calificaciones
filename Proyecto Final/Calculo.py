@@ -12,7 +12,7 @@ class Calculo:
   #end method
 
   def c_promediof(self, notas):
-    return (notas[0]+notas[1]+nota[2]+nota[3])/4
+    return (notas[0]+notas[1]+notas[2]+notas[3])/4
   #end method
 
   def get_pr_practicas(self):
@@ -32,9 +32,8 @@ class Calculo:
   #end method
 
   def get_literal(self):
-    if self._pr_final<60:
-      literal="F"
-    elif self._pr_final>60 and self._pr_final<70:
+    literal="F"
+    if self._pr_final>60 and self._pr_final<70:
       literal="D"
     elif self._pr_final>70 and self._pr_final<80:
       literal= "C"

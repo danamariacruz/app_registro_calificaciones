@@ -69,6 +69,11 @@ class Data:
         #end try
     #end method
 
+    def calificacionByEstudiante(self, idestudiante):
+        self._sentencia = f"select * from 'CALIFICACIONES' WHERE ID_ESTUDIANTE ={idestudiante}"
+        return self._cCursorSql.execute(self._sentencia).fetchall()
+    #end method
+
     def consultar(self, tabla):
         self._sentencia = f"select * from '{tabla}'"
         return self._cCursorSql.execute(self._sentencia).fetchall()

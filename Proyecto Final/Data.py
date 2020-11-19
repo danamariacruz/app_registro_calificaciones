@@ -68,7 +68,7 @@ class Data:
     #end method
 
     def consultarById(self, tabla, field, id):
-        self._sentencia = f"select * from '{tabla}' where {field}={id}" if(tabla!='MATERIA') else f"select * FROM {tabla} WHERE {field}='{_id}'"
+        self._sentencia = f"select * from '{tabla}' where {field}={id}" if(tabla!='MATERIA') else f"select * FROM {tabla} WHERE {field}='{id}'"
         return self._cCursorSql.execute(self._sentencia).fetchone()
     #end method
 

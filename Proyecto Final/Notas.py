@@ -3,8 +3,10 @@ class Notas:
   def __init__(self, list):
     self.set_ppractica(list[0])
     self.set_spractica(list[1])
-    self.set_pparcial(list[2])
-    self.set_sparcial(list[3])
+    self.set_pforo(list[2])
+    self.set_sforo(list[3])
+    self.set_sparcial(list[4])
+    self.set_sparcial(list[5])
     self.set_final(list[4])
   #end ctr
 
@@ -14,6 +16,14 @@ class Notas:
 
   def set_spractica(self, value):
     self._spractica = value
+  #end method
+
+  def set_pforo(self, value):
+    self._pforo = value
+  #end method
+
+  def set_sforo(self, value):
+    self._sforo = value
   #end method
 
   def set_pparcial(self, value):
@@ -35,6 +45,14 @@ class Notas:
 
   def get_spractica(self):
     return self._spractica
+  #end method
+
+  def get_pforo(self):
+    return self._pforo
+  #end method
+
+  def get_sforo(self):
+    return self._sforo
   #end method
 
   def get_pparcial(self):

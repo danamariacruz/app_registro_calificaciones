@@ -9,11 +9,13 @@ from Alumno import Alumno
 
 class MyProgram:
     def __init__(self, master):
-        self.database = Data()
-        self.master = master
+        self._database = Data()
+        self._materias = self._database.consultar('MATERIA')
+        self._estudiantes = self._database.consultar('ESTUDIANTE')
+        self._master = master
         master.title("Sistema de Estudiantes")
         self.menubar = Menu(master)
-        self.router_tree_view = ttk.Treeview(self.master)
+        self.router_tree_view = ttk.Treeview(self._master)
         # self.router_tree_view.bind("<Double-1>", self.itemEvent)
         # self.router_tree_view.bind("<<TreeviewSelect>>", self.tableItemClick)
         #menu 1
@@ -46,17 +48,22 @@ class MyProgram:
     def materiaControl(self, id=0):
         codigo = StringVar()
         nombre = StringVar()
-        filewin = Toplevel(self.master) 
+        filewin = Toplevel(self._master) 
         Label(filewin,text = "Codigo").place(x=10, y=30)
         Label(filewin,text = "Nombre").place(x=10, y=60)
         
         TxtBoxCodigo=Entry(filewin, width=20, textvariable=codigo).place(x=100,y=30)
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nombre).place(x=100,y=60)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=10, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_materia([codigo.get(), nombre.get()])).place(x=10, y=120)
         # botonModificar=Button(filewin, text = "Modificar", width= 14).place(x=120, y=120)
         # botonBorrar=Button(filewin, text = "Borrar", width= 14,command=lambda:self.greet()).place(x=60, y=160)
-
+        if id!=0:
+            data = self._database.consultarById("MATERIA","CODIGO",id)
+            print(data[0])
+            codigo.set(data[0])
+            nombre.set(data[1])
+        #end condition 
         filewin.geometry("250x200")
         filewin.mainloop()
     #end method
@@ -65,7 +72,7 @@ class MyProgram:
         mat = StringVar()
         nom = StringVar()
         sex = StringVar()
-        filewin = Toplevel(self.master)
+        filewin = Toplevel(self._master)
         Label(filewin,text = "Matricula").place(x=10, y=30)
         Label(filewin,text = "Nombre").place(x=10, y=60)
         Label(filewin,text = "Sexo").place(x=10, y=90)
@@ -78,7 +85,7 @@ class MyProgram:
         #botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         #botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
         if id!=0:
-            data = self.database.consultarById("ESTUDIANTE","ID_ESTUDIANTE",id)
+            data = self._database.consultarById("ESTUDIANTE","ID_ESTUDIANTE",id)
             print(data[0])
             mat.set(data[1])
             nom.set(data[2])
@@ -98,7 +105,7 @@ class MyProgram:
         primerParcial = StringVar()
         segundoParcial = StringVar()
         examenFinal = StringVar()
-        filewin = Toplevel(self.master)
+        filewin = Toplevel(self._master)
         Label(filewin,text = "Estudiante").place(x=10, y=10)
         Label(filewin,text = "Materia").place(x=260, y=10)
         Label(filewin,text = "Practica1").place(x=10, y=30)
@@ -108,9 +115,11 @@ class MyProgram:
         Label(filewin,text = "Primer Parcial").place(x=10, y=70)
         Label(filewin,text = "Segundo Parcial").place(x=10, y=90)
         Label(filewin,text = "Examen Final").place(x=260, y=70)
-        
-        TxtBoxEstudiante=Entry(filewin, width=20, textvariable=idEstudiante).place(x=100,y=10)
-        TxtBoxMateria1=Entry(filewin, width=20, textvariable=idMateria).place(x=350,y=10)
+
+        # TxtBoxEstudiante=Entry(filewin, width=20, textvariable=idEstudiante).place(x=100,y=10)
+        CbBoxEstudiante = ttk.Combobox(filewin, state='readonly',values=self.get_dataCombo('ESTUDIANTE')).place(x=100,y=10)
+        CbBoxMateria = ttk.Combobox(filewin, state='readonly',values=self.get_dataCombo('MATERIA')).place(x=350,y=10)
+        # TxtBoxMateria1=Entry(filewin, width=20, textvariable=idMateria).place(x=350,y=10)
         TxtBoxPractica1=Entry(filewin, width=20, textvariable=practica1).place(x=100,y=30)
         TxtBoxPractica2=Entry(filewin, width=20, textvariable=practica2).place(x=100,y=50)
         TxtBoxForo1=Entry(filewin, width=20, textvariable=foro1).place(x=350,y=30)
@@ -119,25 +128,25 @@ class MyProgram:
         TxtBoxSegundoParcial=Entry(filewin, width=20, textvariable=segundoParcial).place(x=100,y=90)
         TxtBoxExamenfinal=Entry(filewin, width=20, textvariable=examenFinal).place(x=350,y=70)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.greet()).place(x=100, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_calificaciones([])).place(x=100, y=120)
         # botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=260, y=120)
         # botonBorrar=Button(filewin, text = "Borrar", width= 14,command= lambda:self.greet()).place(x=180, y=160)
 
-        filewin.geometry("480x200")
+        filewin.geometry("500x200")
         filewin.mainloop()  
     #end method
 
     def consultar(self, tabla):
         print(tabla)
-        filewin = Toplevel(self.master)
+        filewin = Toplevel(self._master)
         frame_router = Frame(filewin)
         frame_router.grid(row=4, column=0, columnspan=4, rowspan=6, pady=20, padx=20)
-        infoTabla = self.database.infotabla(tabla)
+        infoTabla = self._database.infotabla(tabla)
         buscartabla=[]
         for campo in infoTabla:
             buscartabla.append(campo[1])
         #end for
-        dataTable = self.database.consultar(tabla) 
+        dataTable = self._database.consultar(tabla) 
         # print(dataTable[0][0])
         columns = buscartabla
         self.router_tree_view = Treeview(frame_router, columns=columns, show="headings")
@@ -193,15 +202,15 @@ class MyProgram:
         if len(item)>0:
             print("you clicked on id", item[0])
             if tabla == "ESTUDIANTE":
-                data = self.database.delete(item[0], tabla, 'ID_ESTUDIANTE')
+                data = self._database.delete(item[0], tabla, 'ID_ESTUDIANTE')
                 messagebox.showinfo(title='Informacion', message=data)
                 f.destroy()
             elif tabla == 'MATERIA':
-                data = self.database.delete(item[0], tabla, 'CODIGO')
+                data = self._database.delete(item[0], tabla, 'CODIGO')
                 messagebox.showinfo(title='Informacion', message=data)
                 f.destroy()
             else:
-                data = self.database.delete(item[0], tabla, 'ID_CALIFICACION')
+                data = self._database.delete(item[0], tabla, 'ID_CALIFICACION')
                 messagebox.showinfo(title='Informacion', message=data)
                 f.destroy()
         else:
@@ -215,15 +224,15 @@ class MyProgram:
             if tabla == "ESTUDIANTE":
                 f.destroy()
                 self.estudianteControl(item[0])
-                #print(self.database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
+                #print(self._database.delete(item[0], tabla, 'ID_ESTUDIANTE'))
             elif tabla == 'MATERIA':
                 f.destroy()
                 self.materiaControl(item[0])
-                # print(self.database.delete(item[0], tabla, 'CODIGO'))
+                # print(self._database.delete(item[0], tabla, 'CODIGO'))
             else:
                 f.destroy()
                 self.calificacionControl(item[0])
-                # print(self.database.delete(item[0], tabla, 'ID_CALIFICACION'))
+                # print(self._database.delete(item[0], tabla, 'ID_CALIFICACION'))
         else:
             messagebox.showinfo(title='Informacion', message='Seleccione algo')
     #end method
@@ -233,13 +242,36 @@ class MyProgram:
         alumno = Alumno(dic)
         # print(alumno.is_valid())
         if alumno.is_valid():
-            data = self.database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
+            data = self._database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
             messagebox.showinfo(title='Informacion', message=data)
+    #end method
+
+    def insert_materia(self, values):
+        if values[0]!="" and values[0]!="":
+            data = self._database.insert([(values[0], values[1])], 'MATERIA',2)
+            messagebox.showinfo(title='Informacion', message=data)
+        else:
+            messagebox.showinfo(title='Informacion', message='Datos no validos')
+    #end method
+
+    def insert_calificaciones(self, values):
+        v=0
     #end method
 
     def greet(self):
         messagebox.showinfo(title='Informacion', message='Greetings!')
     #end methhod
+
+    def get_dataCombo(self, tabla):
+        data=[]
+        values = self._estudiantes if(tabla=='ESTUDIANTE') else self._materias
+        i=0
+        for v in values:
+            data.append(v[0])
+            i=i+1
+        return data
+    #end method
+
 #end class
 
 root = Tk()

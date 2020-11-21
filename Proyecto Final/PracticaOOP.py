@@ -8,18 +8,23 @@ from Data import Data
 from Alumno import Alumno
 from Notas import Notas
 from Reporte import Reporte
+from Services import Services
 
 class MyProgram:
     def __init__(self, master):
         self._database = Data()
+        
+        #test services
+        self._services= Services('40200656433')
+        print(self._services.get_datos())
+        #end test
+
         self._materias = self._database.consultar('MATERIA')
         self._estudiantes = self._database.consultar('ESTUDIANTE')
         self._master = master
         master.title("Sistema de Estudiantes")
         self.menubar = Menu(master)
         self.router_tree_view = ttk.Treeview(self._master)
-        # self.router_tree_view.bind("<Double-1>", self.itemEvent)
-        # self.router_tree_view.bind("<<TreeviewSelect>>", self.tableItemClick)
         #menu 1
         self.estudiantesmenu = Menu(self.menubar, tearoff=0)
         self.estudiantesmenu.add_command(label="Consultar", command=lambda:self.consultar("ESTUDIANTE"))
@@ -42,14 +47,6 @@ class MyProgram:
 
         master.config(menu=self.menubar)
         master.geometry("400x300")
-        # self.label = Label(master, text="This is our first GUI!")
-        # self.label.pack()
-
-        # self.greet_button = Button(master, text="Greet", command=self.greet)
-        # self.greet_button.pack()
-
-        # self.close_button = Button(master, text="Close", command=master.quit)
-        # self.close_button.pack()
     #end _init
 
     def reporteControl(self):

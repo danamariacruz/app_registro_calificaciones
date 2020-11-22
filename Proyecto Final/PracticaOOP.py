@@ -9,15 +9,18 @@ from Alumno import Alumno
 from Notas import Notas
 from Reporte import Reporte
 from Services import Services
+import base64
+import io
+import urllib
+from PIL import ImageTk, Image 
+
+
 
 class MyProgram:
     def __init__(self, master):
         self._database = Data()
         
-        #test services
-        self._services= Services('40200656433')
-        print(self._services.get_datos())
-        #end test
+
 
         self._materias = self._database.consultar('MATERIA')
         self._estudiantes = self._database.consultar('ESTUDIANTE')
@@ -86,18 +89,32 @@ class MyProgram:
 
     def estudianteControl(self, id=0):
         mat = StringVar()
+        cedula = StringVar()
         nom = StringVar()
+        apellido = StringVar()
         sex = StringVar()
         filewin = Toplevel(self._master)
-        Label(filewin,text = "Matricula").place(x=10, y=30)
+        Label(filewin,text = "Cecula").place(x=10, y=30)
         Label(filewin,text = "Nombre").place(x=10, y=60)
-        Label(filewin,text = "Sexo").place(x=10, y=90)
+        Label(filewin,text = "Apellido").place(x=10, y=90)
+        Label(filewin,text = "Sexo").place(x=10, y=120)
+        Label(filewin,text = "Matricula").place(x=10, y=150)
         
-        TxtBoxMatricula=Entry(filewin, width=20, textvariable=mat).place(x=100,y=30)
+        canvas = Canvas(filewin, width = 300, height = 300).place(x=310, y=60)     
+        img = ImageTk.PhotoImage(Image.open("profileIcon.png"))
+        photoLabel = Label(filewin, image = img)
+        photoLabel.place(x=320, y=60)
+        
+
+        
+        TxtBoxCedula=Entry(filewin, width=20, textvariable=cedula).place(x=100,y=30)
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nom).place(x=100,y=60)
-        TxtBoxSexo=Entry(filewin, width=20, textvariable=sex).place(x=100,y=90)
+        TxtBoxApellido=Entry(filewin, width=20, textvariable=apellido).place(x=100,y=90)
+        TxtBoxSexo=Entry(filewin, width=20, textvariable=sex).place(x=100,y=120)
+        TxtBoxMatricula=Entry(filewin, width=20, textvariable=mat).place(x=100,y=150)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),sex.get()])).place(x=10, y=120)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),sex.get()])).place(x=10, y=180)
+        botonInsertar=Button(filewin, text = "Consultar", width= 10, command= lambda:self.estudianteDesdeApi(cedula.get(), [nom,apellido, sex], photoLabel)).place(x=300, y=30)
         #botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         #botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
         if id!=0:
@@ -107,9 +124,31 @@ class MyProgram:
             nom.set(data[2])
             sex.set(data[3])
         #end condition 
-        filewin.geometry("250x200")
+        filewin.geometry("500x250")
         filewin.mainloop()
-    #end method   
+    #end method
+    
+    def estudianteDesdeApi(self, cedula, inputsFields, photoLabel):        
+        if(cedula != ""):
+            respuestaServicio = Services(cedula).get_datos()
+            #manejo de service fail
+            if type(respuestaServicio) != str:
+                if "Cedula" in respuestaServicio:
+                    print(respuestaServicio)
+                    inputsFields[0].set(respuestaServicio['Nombres'])
+                    inputsFields[1].set(f"{respuestaServicio['Apellido1']} {respuestaServicio['Apellido2']}")
+                    inputsFields[2].set(respuestaServicio['IdSexo'])
+                    print(respuestaServicio["foto"])
+                    image_url = respuestaServicio["foto"]
+                    raw_data = urllib.request.urlopen(image_url).read()
+                    img = Image.open(io.BytesIO(raw_data))
+                    photo =  ImageTk.PhotoImage(img)
+                    photoLabel.config(image=photo)
+                    photoLabel.photo = photo
+                    #image = ImageTk.PhotoImage(im)
+  
+            
+        
 
     def calificacionControl(self, id=0):
         idEstudiante = StringVar()

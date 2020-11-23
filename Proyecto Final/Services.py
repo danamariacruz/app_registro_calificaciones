@@ -17,6 +17,6 @@ class Services:
         if self._datos.status_code==200:
             return self._datos.json()
         else:
-            return '500'
+            return {'ok': False}
     #end method
 #end class

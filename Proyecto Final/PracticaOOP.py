@@ -19,11 +19,10 @@ from PIL import ImageTk, Image
 class MyProgram:
     def __init__(self, master):
         self._database = Data()
-        
-
-
         self._materias = self._database.consultar('MATERIA')
         self._estudiantes = self._database.consultar('ESTUDIANTE')
+        self._carrera = self._database.consultar('CARRERA')
+        self._provincia = self._database.consultar('PROVINCIA')
         self._master = master
         master.title("Sistema de Estudiantes")
         self.menubar = Menu(master)
@@ -93,28 +92,32 @@ class MyProgram:
         nom = StringVar()
         apellido = StringVar()
         sex = StringVar()
+        idcarrera = StringVar()
+        idprovincia = StringVar()
         filewin = Toplevel(self._master)
         Label(filewin,text = "Cecula").place(x=10, y=30)
         Label(filewin,text = "Nombre").place(x=10, y=60)
         Label(filewin,text = "Apellido").place(x=10, y=90)
         Label(filewin,text = "Sexo").place(x=10, y=120)
         Label(filewin,text = "Matricula").place(x=10, y=150)
+        Label(filewin,text = "Carrera").place(x=10, y=180)
+        Label(filewin,text = "Provincia").place(x=10, y=210)
         
         canvas = Canvas(filewin, width = 300, height = 300).place(x=310, y=60)     
         img = ImageTk.PhotoImage(Image.open("profileIcon.png"))
         photoLabel = Label(filewin, image = img)
         photoLabel.place(x=320, y=60)
         
-
-        
         TxtBoxCedula=Entry(filewin, width=20, textvariable=cedula).place(x=100,y=30)
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nom).place(x=100,y=60)
         TxtBoxApellido=Entry(filewin, width=20, textvariable=apellido).place(x=100,y=90)
         TxtBoxSexo=Entry(filewin, width=20, textvariable=sex).place(x=100,y=120)
         TxtBoxMatricula=Entry(filewin, width=20, textvariable=mat).place(x=100,y=150)
+        CbBoxCarrera = ttk.Combobox(filewin, state='readonly', textvariable=idcarrera, values=self.get_dataCombo('CARRERA')).place(x=100,y=180)
+        CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idprovincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=210)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),sex.get()])).place(x=10, y=180)
-        botonInsertar=Button(filewin, text = "Consultar", width= 10, command= lambda:self.estudianteDesdeApi(cedula.get(), [nom,apellido, sex], photoLabel)).place(x=300, y=30)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),apellido.get(),cedula.get(),'foto',sex.get(),idprovincia.get(),idcarrera.get()])).place(x=10, y=240)
+        botonConsultar=Button(filewin, text = "Consultar", width= 10, command= lambda:self.estudianteDesdeApi(cedula.get(), [nom,apellido, sex], photoLabel)).place(x=300, y=30)
         #botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         #botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
         if id!=0:
@@ -124,31 +127,9 @@ class MyProgram:
             nom.set(data[2])
             sex.set(data[3])
         #end condition 
-        filewin.geometry("500x250")
+        filewin.geometry("450x280")
         filewin.mainloop()
     #end method
-    
-    def estudianteDesdeApi(self, cedula, inputsFields, photoLabel):        
-        if(cedula != ""):
-            respuestaServicio = Services(cedula).get_datos()
-            #manejo de service fail
-            if type(respuestaServicio) != str:
-                if "Cedula" in respuestaServicio:
-                    print(respuestaServicio)
-                    inputsFields[0].set(respuestaServicio['Nombres'])
-                    inputsFields[1].set(f"{respuestaServicio['Apellido1']} {respuestaServicio['Apellido2']}")
-                    inputsFields[2].set(respuestaServicio['IdSexo'])
-                    print(respuestaServicio["foto"])
-                    image_url = respuestaServicio["foto"]
-                    raw_data = urllib.request.urlopen(image_url).read()
-                    img = Image.open(io.BytesIO(raw_data))
-                    photo =  ImageTk.PhotoImage(img)
-                    photoLabel.config(image=photo)
-                    photoLabel.photo = photo
-                    #image = ImageTk.PhotoImage(im)
-  
-            
-        
 
     def calificacionControl(self, id=0):
         idEstudiante = StringVar()
@@ -312,6 +293,8 @@ class MyProgram:
             data = self._database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
             messagebox.showinfo(title='Informacion', message=data)
             self._estudiantes = self._database.consultar('ESTUDIANTE')
+        else:
+            messagebox.showinfo(title='Informacion', message='Datos no validos')
     #end method
 
     def insert_materia(self, values):
@@ -339,6 +322,34 @@ class MyProgram:
         else:  
             messagebox.showinfo(title='Informacion', message='Ya tiene 3 materias.' if(len(ncalif)==3) else 'Datos no validos')
     #end method
+    
+    def estudianteDesdeApi(self, cedula, inputsFields, photoLabel):        
+        if(cedula != ""):
+            respuestaServicio = Services(cedula).get_datos()
+            #manejo de service fail
+            print('aqui', respuestaServicio)
+            if respuestaServicio['ok']!=False:
+                if "Cedula" in respuestaServicio:
+                    print(respuestaServicio)
+                    inputsFields[0].set(respuestaServicio['Nombres'])
+                    inputsFields[1].set(f"{respuestaServicio['Apellido1']} {respuestaServicio['Apellido2']}")
+                    inputsFields[2].set(respuestaServicio['IdSexo'])
+                    print(respuestaServicio["foto"])
+                    image_url = respuestaServicio["foto"]
+                    raw_data = urllib.request.urlopen(image_url).read()
+                    img = Image.open(io.BytesIO(raw_data))
+                    photo =  ImageTk.PhotoImage(img)
+                    photoLabel.config(image=photo)
+                    photoLabel.photo = photo
+                    print(photo)
+                    #image = ImageTk.PhotoImage(im)
+                # else:
+                #     messagebox.showinfo(title='Informacion', message='Cedula no encontrada') 
+            else:
+                messagebox.showinfo(title='Informacion', message='Ha ocurrido un error, intente otra cedula.') 
+        else:
+            messagebox.showinfo(title='Informacion', message='Cedula no valida.')
+    #end method 
 
     def greet(self):
         messagebox.showinfo(title='Informacion', message='Greetings!')
@@ -346,10 +357,16 @@ class MyProgram:
 
     def get_dataCombo(self, tabla):
         data=[]
-        values = self._estudiantes if(tabla=='ESTUDIANTE') else self._materias
+        values = self._estudiantes
+        if tabla=='MATERIA':
+            values = self._materias
+        elif tabla=='CARRERA':
+            values = self._carrera
+        elif tabla=='PROVINCIA':
+            values= self._provincia
         i=0
         for v in values:
-            data.append(v[0])
+            data.append(v[1]if(tabla=='PROVINCIA' or tabla=='CARRERA')else v[0])
             i=i+1
         return data
     #end method

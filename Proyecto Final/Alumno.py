@@ -5,10 +5,15 @@ class Alumno:
 
   def __init__(self, dic):
     # formato del diccionario
-    # dic ={'data':['20190506','juan','M'],'notas':[99,99,99,99,99,99,99]}
+    # dic ={'data':['20190506','juan','perez','40200656433','foto','M',1,2],'notas':[99,99,99,99,99,99,99]}
     self._matricula=dic['data'][0]
     self._nombre=dic['data'][1]
-    self._sexo=dic['data'][2]
+    self._apellido=dic['data'][2]
+    self._cedula=dic['data'][3]
+    self._foto=dic['data'][4]
+    self._sexo=dic['data'][5]
+    self._provincia=dic['data'][6]
+    self._carrera=dic['data'][7]
     self._nota= Notas(dic['notas'])
     self._calculo= Calculo(self._nota)
     #TO DO
@@ -38,6 +43,16 @@ class Alumno:
     if self._nombre=='':
       valido=False
     if self._sexo=='':
+      valido=False
+    if self._apellido=='':
+      valido=False
+    if self._foto=='':
+      valido=False
+    if self._cedula=='':
+      valido=False
+    if self._carrera=='':
+      valido=False
+    if self._provincia=='':
       valido=False
     return valido
   #end method

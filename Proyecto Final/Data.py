@@ -51,7 +51,8 @@ class Data:
              (18, 'Nagua', '19.3832','-69.8474'),
              (19, 'Dajabón', '19.54878','-71.70829'),
              (20, 'Sabaneta', '19.47793','-71.34125')]
-        self.insert(self._data,'PROVINCIA',4)
+        if(len(self.consultar('PROVINCIA'))==0):
+            self.insert(self._data,'PROVINCIA',4)
         #data 2
         self._data=[
             (1, 'Ingeniería eléctrica'),
@@ -67,7 +68,8 @@ class Data:
             (11, 'Licenciatura en diseño de interiores'),
             (12, 'Licenciatura en diseño gráfico'),
             (13, 'Licenciatura en finanzas')]
-        self.insert(self._data,'CARRERA',2)
+        if(len(self.consultar('CARRERA'))==0):
+            self.insert(self._data,'CARRERA',2)
     #end method
 
     def insert(self, varios, tabla, n):
@@ -89,7 +91,12 @@ class Data:
             self._sentencia=f'''UPDATE {tabla}
                     SET MATRICULA = {varios[0][0]} ,
                         NOMBRE = '{varios[0][2]}' ,
-                        SEXO = '{varios[0][3]}'
+                        APELLIDO = '{varios[0][3]}',
+                        CEDULA = '{varios[0][4]}',
+                        FOTO = '{varios[0][5]}',
+                        SEXO = '{varios[0][6]}',
+                        PROVINCIA = '{varios[0][7]}',
+                        CARRERA = '{varios[0][8]}'
                     WHERE ID_ESTUDIANTE = {varios[0][0]}'''
         elif tabla=="MATERIA":
             self._sentencia=f'''UPDATE {tabla}

@@ -23,6 +23,7 @@ class MyProgram:
         self._estudiantes = self._database.consultar('ESTUDIANTE')
         self._carrera = self._database.consultar('CARRERA')
         self._provincia = self._database.consultar('PROVINCIA')
+        self._imgfile='profileIcon.png'
         self._master = master
         master.title("Sistema de Estudiantes")
         self.menubar = Menu(master)
@@ -91,6 +92,7 @@ class MyProgram:
         cedula = StringVar()
         nom = StringVar()
         apellido = StringVar()
+        self._imgfile="profileIcon.png"
         sex = StringVar()
         idcarrera = StringVar()
         idprovincia = StringVar()
@@ -103,11 +105,10 @@ class MyProgram:
         Label(filewin,text = "Carrera").place(x=10, y=180)
         Label(filewin,text = "Provincia").place(x=10, y=210)
         
-        canvas = Canvas(filewin, width = 300, height = 300).place(x=310, y=60)     
-        img = ImageTk.PhotoImage(Image.open("profileIcon.png"))
+        canvas = Canvas(filewin, width = 300, height = 300).place(x=310, y=60)    
+        img = ImageTk.PhotoImage(Image.open(self._imgfile))
         photoLabel = Label(filewin, image = img)
         photoLabel.place(x=320, y=60)
-        
         TxtBoxCedula=Entry(filewin, width=20, textvariable=cedula).place(x=100,y=30)
         TxtBoxNombre=Entry(filewin, width=20, textvariable=nom).place(x=100,y=60)
         TxtBoxApellido=Entry(filewin, width=20, textvariable=apellido).place(x=100,y=90)
@@ -116,7 +117,7 @@ class MyProgram:
         CbBoxCarrera = ttk.Combobox(filewin, state='readonly', textvariable=idcarrera, values=self.get_dataCombo('CARRERA')).place(x=100,y=180)
         CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idprovincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=210)
         
-        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),apellido.get(),cedula.get(),'foto',sex.get(),idprovincia.get(),idcarrera.get()])).place(x=10, y=240)
+        botonInsertar=Button(filewin, text = "Insertar", width= 14, command= lambda:self.insert_estudiante([mat.get(),nom.get(),apellido.get(),cedula.get(),self._imgfile,sex.get(),idprovincia.get(),idcarrera.get()])).place(x=10, y=240)
         botonConsultar=Button(filewin, text = "Consultar", width= 10, command= lambda:self.estudianteDesdeApi(cedula.get(), [nom,apellido, sex], photoLabel)).place(x=300, y=30)
         #botonModificar=Button(filewin, text = "Modificar", width= 14,).place(x=120, y=120)
         #botonBorrar=Button(filewin, text = "Borrar", width= 14, command= lambda:self.greet()).place(x=60, y=160)
@@ -125,7 +126,17 @@ class MyProgram:
             print(data[0])
             mat.set(data[1])
             nom.set(data[2])
-            sex.set(data[3])
+            apellido.set(data[3])
+            cedula.set(data[4])
+            self._imgfile=data[5]
+            raw_data = urllib.request.urlopen(self._imgfile).read()
+            img = Image.open(io.BytesIO(raw_data))
+            photo =  ImageTk.PhotoImage(img)
+            photoLabel.config(image=photo)
+            photoLabel.photo = photo
+            sex.set(data[6])
+            idprovincia.set(data[7])
+            idcarrera.set(data[8])
         #end condition 
         filewin.geometry("450x280")
         filewin.mainloop()
@@ -224,7 +235,7 @@ class MyProgram:
 
     def dinamyFill(self, tabla, data):
         if tabla =="ESTUDIANTE":
-            return (data[0], data[1], data[2], data[3])
+            return (data[0], data[1], data[2], data[3],data[4],data[5],data[6],data[7],data[8])
         elif tabla=="MATERIA":
             return (data[0], data[1])
         elif tabla=="CALIFICACIONES":
@@ -288,9 +299,9 @@ class MyProgram:
     def insert_estudiante(self,values):
         dic = {'data':values,'notas':[0,0,0,0,0,0,0]}
         alumno = Alumno(dic)
-        print(dic['data'])
+        print('data antes', dic['data'])
         if alumno.is_valid():
-            data = self._database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2])],'ESTUDIANTE',4)
+            data = self._database.insert([(dic['data'][0],dic['data'][0],dic['data'][1],dic['data'][2],dic['data'][3],dic['data'][4],dic['data'][5],dic['data'][6],dic['data'][7])],'ESTUDIANTE',9)
             messagebox.showinfo(title='Informacion', message=data)
             self._estudiantes = self._database.consultar('ESTUDIANTE')
         else:
@@ -335,8 +346,8 @@ class MyProgram:
                     inputsFields[1].set(f"{respuestaServicio['Apellido1']} {respuestaServicio['Apellido2']}")
                     inputsFields[2].set(respuestaServicio['IdSexo'])
                     print(respuestaServicio["foto"])
-                    image_url = respuestaServicio["foto"]
-                    raw_data = urllib.request.urlopen(image_url).read()
+                    self._imgfile = respuestaServicio["foto"]
+                    raw_data = urllib.request.urlopen(self._imgfile).read()
                     img = Image.open(io.BytesIO(raw_data))
                     photo =  ImageTk.PhotoImage(img)
                     photoLabel.config(image=photo)

@@ -46,6 +46,7 @@ class MyProgram:
         #menu 4
         self.reportesmenu = Menu(self.menubar, tearoff=0)
         self.reportesmenu.add_command(label="Reporte html", command=lambda:self.reporteControl())
+        self.reportesmenu.add_command(label="Reporte mapa", command=lambda:self.reporteControlM())
         self.menubar.add_cascade(label="Reportes", menu=self.reportesmenu)
 
         master.config(menu=self.menubar)
@@ -58,7 +59,25 @@ class MyProgram:
 
         Label(filewin,text = "Estudiante").place(x=10, y=30)
         CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idEstudiante, values=self.get_dataCombo('ESTUDIANTE')).place(x=100,y=30)
-        botonReportee=Button(filewin, text = "Reporte html", width= 14, command= lambda:self.reporte(idEstudiante.get())).place(x=100, y=80)
+        botonReportee=Button(filewin, text = "Reporte html", width= 14, command= lambda:self.reporteH(idEstudiante.get())).place(x=100, y=80)
+
+        filewin.geometry("250x200")
+        filewin.mainloop()
+    #end method
+
+    def reporteControlM(self):
+        idMateria =StringVar()
+        idProvincia =StringVar()
+        idLitereal = StringVar()
+        filewin = Toplevel(self._master)
+
+        Label(filewin,text = "Materia").place(x=10, y=30)
+        Label(filewin,text = "Provincia").place(x=10, y=60)
+        Label(filewin, text="Literal").place(x=10,y=90)
+        CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=100,y=30)
+        CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
+        CbBoxLiteral = ttk.Combobox(filewin,state='readonly', textvariable=idLitereal, values=['A','B','C','D','F','TODOS']).place(x=100,y=90)
+        botonReporte=Button(filewin, text = "Reporte mapa", width= 14, command= lambda:self.reportM([idMateria.get(),idProvincia.get(),idLitereal.get()])).place(x=100, y=130)
 
         filewin.geometry("250x200")
         filewin.mainloop()
@@ -382,9 +401,19 @@ class MyProgram:
         return data
     #end method
 
-    def reporte(self, m):
+    def reporteH(self, m):
+        print(m)
         report = Reporte(m)
         report.get_report()
+    #end method
+
+    def reportM(self, values):
+        #0 materi 1 provincia 2 literal
+        if values[0]!="" and values[1]!="" and values[2]!="":
+            report = Reporte('20202020')
+            report.get_reportM(values)
+        else:
+            messagebox.showinfo(title='Informacion', message='Seleccione los campos.')
     #end method
 #end class
 

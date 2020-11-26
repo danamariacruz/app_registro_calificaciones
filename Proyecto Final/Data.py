@@ -129,6 +129,17 @@ class Data:
         return self._cCursorSql.execute(self._sentencia).fetchall()
     #end method
 
+    def mapaData(self, values):
+        self._sentencia=f"""SELECT * from PROVINCIA inner join ESTUDIANTE
+        on PROVINCIA.DESCRIPCION=ESTUDIANTE.PROVINCIA
+        inner join CALIFICACIONES 
+        on CALIFICACIONES.ID_ESTUDIANTE=ESTUDIANTE.ID_ESTUDIANTE
+        inner join MATERIA
+        on MATERIA.CODIGO=CALIFICACIONES.ID_MATERIA
+        WHERE MATERIA.CODIGO='{values[0]}' AND PROVINCIA.DESCRIPCION='{values[1]}'"""
+        return self._cCursorSql.execute(self._sentencia).fetchall()
+    #end method
+
     def consultar(self, tabla):
         self._sentencia = f"select * from '{tabla}'"
         return self._cCursorSql.execute(self._sentencia).fetchall()

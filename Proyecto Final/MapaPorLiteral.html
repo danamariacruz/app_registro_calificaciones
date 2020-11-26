@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_665a16d7a7ca44faa68da287c060f3f6 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>    
+    
+            <div class="folium-map" id="map_665a16d7a7ca44faa68da287c060f3f6" ></div>
+        
+</body>
+<script>    
+    
+            var map_665a16d7a7ca44faa68da287c060f3f6 = L.map(
+                "map_665a16d7a7ca44faa68da287c060f3f6",
+                {
+                    center: [18.8269076, -70.2872627],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 8,
+                    zoomControl: true,
+                    preferCanvas: false,
+                    titles: "literal",
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_08aa31006a46483ea9326ed1a228cee7 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_665a16d7a7ca44faa68da287c060f3f6);
+        
+    
+            var marker_7850d253b32b45138a62e288190c73d8 = L.marker(
+                [18.41667, -70.1],
+                {}
+            ).addTo(map_665a16d7a7ca44faa68da287c060f3f6);
+        
+    
+            var icon_6456d81f797e48b2a5a1b8acca23e234 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_7850d253b32b45138a62e288190c73d8.setIcon(icon_6456d81f797e48b2a5a1b8acca23e234);
+        
+    
+        var popup_04dd3a48cd32488ea5c4309f40701d3e = L.popup({"maxWidth": "100%"});
+
+        
+            var html_bf28da1157f947bbbf88b4d4dc27df07 = $(`<div id="html_bf28da1157f947bbbf88b4d4dc27df07" style="width: 100.0%; height: 100.0%;">PAUL ABEL</div>`)[0];
+            popup_04dd3a48cd32488ea5c4309f40701d3e.setContent(html_bf28da1157f947bbbf88b4d4dc27df07);
+        
+
+        marker_7850d253b32b45138a62e288190c73d8.bindPopup(popup_04dd3a48cd32488ea5c4309f40701d3e)
+        ;
+
+        
+    
+    
+            marker_7850d253b32b45138a62e288190c73d8.bindTooltip(
+                `<div>
+                     San Cristóbal
+                 </div>`,
+                {"sticky": true}
+            );
+        
+</script>

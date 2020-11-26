@@ -1,5 +1,7 @@
 import webbrowser
 from datetime import date
+import folium
+import os
 from Data import Data
 from Calculo import Calculo
 from Notas import Notas
@@ -28,6 +30,19 @@ class Reporte:
         if(literal == "F"):
             htmlLiteral = self.html_literalColor("F","#ff0000")
         return htmlLiteral
+    #end method
+    def literalMapa(self,literal):
+        mapaLiteral='cadetblue'
+        if(literal == "B"):
+            mapaLiteral="darkgreen"
+        if(literal == "C"):
+            mapaLiteral="orange"
+        if(literal == "D"):
+            mapaLiteral="pink"
+        if(literal == "F"):
+            mapaLiteral="red"
+        return mapaLiteral
+
     #end method
 
     def html_literalColor(self, literal, color):
@@ -87,7 +102,6 @@ class Reporte:
         for cal in self._calificaiones:
             calificacion = calificacion + self.generateCalificationsRow(cal)
         #end for
-        
         mensaje = f'''
         <html>
         <head></head>
@@ -128,5 +142,31 @@ class Reporte:
         file.close()
         webbrowser.open_new_tab('Calificaciones.html')
     #end method
-
+    
+    def get_reportM(self,values):
+        #0 materia 1 provincia 2 literal
+        self._mapaData = self._database.mapaData(values)
+        if len(self._mapaData)>0:
+            melbourne = (18.8269076, -70.2872627)
+            map = folium.Map(location = melbourne, zoom_start=8, titles='literal')
+            if values[2]=="TODOS":
+                for item in self._mapaData:
+                    nota= Notas([item[16],item[17],item[18],item[19],item[20],item[21],item[22]])
+                    calc = Calculo(nota)
+                    folium.Marker(location = (item[2],item[3]), tooltip=(item[1]), popup=(item[6]),icon=folium.Icon(self.literalMapa(calc.get_literal()))).add_to(map)
+                #end loop
+                map.save("MateriProvincia.html")
+                os.system("MateriProvincia.html")
+            else:
+                for item in self._mapaData:
+                    nota= Notas([item[16],item[17],item[18],item[19],item[20],item[21],item[22]])
+                    calc = Calculo(nota)
+                    if calc.get_literal()==values[2]:
+                        folium.Marker(location = (item[2],item[3]), tooltip=(item[1]), popup=(item[6]),icon=folium.Icon(self.literalMapa(calc.get_literal()))).add_to(map)
+                #end loop
+                map.save("MapaPorLiteral.html")
+                os.system("MapaPorLiteral.html")
+            #end condition
+        #end condition
+    #end method
 #end class

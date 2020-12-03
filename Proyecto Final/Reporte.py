@@ -2,6 +2,7 @@ import webbrowser
 from datetime import date
 import folium
 import os
+import matplotlib.pyplot as plt
 from Data import Data
 from Calculo import Calculo
 from Notas import Notas
@@ -12,6 +13,7 @@ class Reporte:
         self._estudiante = self._database.consultarById('ESTUDIANTE','ID_ESTUDIANTE',matricula)
         self._calificaiones = self._database.calificacionByEstudiante(matricula)
         self._date = date.today()
+        self._fig, self._ax = plt.subplots()
     #end method
 
     def get_Date(self):
@@ -96,6 +98,10 @@ class Reporte:
       </tr>'''
     #end method
 
+    # def generateDataGrafico(self,tipo):
+    #     self._
+    #end method
+
     def get_report(self):
         actualDate = self.get_Date()
         calificacion = ""
@@ -168,5 +174,21 @@ class Reporte:
                 os.system("MapaPorLiteral.html")
             #end condition
         #end condition
+    #end method
+
+    def get_reportG(self, values):
+        # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
+        self._ax.set_title(values[3])
+        if values[0]=='barra':
+            self._ax.set_xlabel(values[4])
+            self._ax.set_ylabel(values[5])
+            self._ax.bar(values[1],values[2],color=['blue','green', 'yellow','pink','red',])
+            plt.savefig('barra.png')
+            plt.show()
+        elif values[0]=="pastel":
+            self._ax.pie(values[1],autopct="%1.1f%%",)
+            self._ax.legend(labels=values[2])
+            plt.savefig('pastel.png')
+            plt.show()
     #end method
 #end class

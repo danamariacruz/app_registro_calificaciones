@@ -7,6 +7,7 @@ from datetime import datetime
 from Data import Data
 from Alumno import Alumno
 from Notas import Notas
+from Calculo import Calculo
 from Reporte import Reporte
 from Services import Services
 import base64
@@ -47,6 +48,7 @@ class MyProgram:
         self.reportesmenu = Menu(self.menubar, tearoff=0)
         self.reportesmenu.add_command(label="Reporte html", command=lambda:self.reporteControl())
         self.reportesmenu.add_command(label="Reporte mapa", command=lambda:self.reporteControlM())
+        self.reportesmenu.add_command(label="Reporte grafico", command=lambda:self.reporteControlG())
         self.menubar.add_cascade(label="Reportes", menu=self.reportesmenu)
 
         master.config(menu=self.menubar)
@@ -80,6 +82,24 @@ class MyProgram:
         botonReporte=Button(filewin, text = "Reporte mapa", width= 14, command= lambda:self.reportM([idMateria.get(),idProvincia.get(),idLitereal.get()])).place(x=100, y=130)
 
         filewin.geometry("250x200")
+        filewin.mainloop()
+    #end method
+
+    def reporteControlG(self):
+        filewin = Toplevel(self._master)
+
+        Label(filewin,text = "Notas por literales").place(x=10, y=30)
+        Label(filewin,text = "Literal por provincia").place(x=10, y=70)
+        Label(filewin,text = "Estudiantes por carrera").place(x=10, y=110)
+        # Label(filewin, text="Literal").place(x=10,y=90)
+        # CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=100,y=30)
+        # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
+        # CbBoxLiteral = ttk.Combobox(filewin,state='readonly', textvariable=idLitereal, values=['A','B','C','D','F','TODOS']).place(x=100,y=90)
+        botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1()).place(x=130, y=30)
+        botonReporteP=Button(filewin, text = "Generar", width= 14, command= lambda:self.greet()).place(x=130, y=70)
+        botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3()).place(x=150, y=110)
+
+        filewin.geometry("350x300")
         filewin.mainloop()
     #end method
 
@@ -415,6 +435,57 @@ class MyProgram:
         else:
             messagebox.showinfo(title='Informacion', message='Seleccione los campos.')
     #end method
+
+    def reportG3(self):
+        values = self._database.estudianteByCarrera()
+        # values=[(1, 'Ingeniería de software'), (2, 'Ingeniería industrial')]
+        value=[]
+        legend=[]
+        for i in values:
+            value.append(i[0])
+            legend.append(i[1])
+        report = Reporte('20202020')
+        # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
+        data=['pastel',value,legend,'Estudiantes por carreras']
+        report.get_reportG(data)
+    #end method
+
+    def reportG1(self):
+        n = self._database.consultar('CALIFICACIONES')
+        letras ={'A':0,'B':0,'C':0,'D':0,'F':0}
+        for i in n:
+            nota = Notas([i[3],i[4],i[5],i[6],i[7],i[8],i[9]])
+            cal = Calculo(nota)
+            for f in letras:
+                if f==cal.get_literal():
+                    letras[f]=letras[f]+1
+        print(letras)
+        report = Reporte('20202020')
+        # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
+        value=[i for i in letras]
+        legend=[letras[i] for i in letras]
+        data=['barra',value,legend,'Notas por literal','Literal','Cantidad']
+        report.get_reportG(data)
+    #end method
+
+    #  def reportG2(self):
+    #     n = self._database.literalesByProvincia()
+    #     letras = {'A':0,'B':0,'C':0,'D':0,'F':0}
+    #     for i in n:
+    #         nota = Notas([i[3],i[4],i[5],i[6],i[7],i[8],i[9]])
+    #         cal = Calculo(nota)
+    #         for f in letras:
+    #             if f==cal.get_literal():
+    #                 letras[f]=letras[f]+1
+    #     print(letras)
+    #     report = Reporte('20202020')
+    #     # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
+    #     value=[i for i in letras]
+    #     legend=[letras[i] for i in letras]
+    #     data=['barra',value,legend,'Notas por literal','Literal','Cantidad']
+    #     report.get_reportG(data)
+    # #end method
+
 #end class
 
 root = Tk()

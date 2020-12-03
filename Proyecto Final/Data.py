@@ -140,6 +140,23 @@ class Data:
         return self._cCursorSql.execute(self._sentencia).fetchall()
     #end method
 
+    def estudianteByCarrera(self):
+        self._sentencia="""SELECT count(*) AS total, C.DESCRIPCION AS carrera FROM ESTUDIANTE  as E
+            inner join CARRERA as C
+            on E.CARRERA=C.DESCRIPCION
+            GROUP by C.DESCRIPCION"""
+        return self._cCursorSql.execute(self._sentencia).fetchall()
+    #end method
+
+    def literalesByProvincia(self):
+        self._sentencia="""SELECT C.*, P.DESCRIPCION as PROVINCIA from ESTUDIANTE AS E
+            inner join CALIFICACIONES AS C
+            on C.ID_ESTUDIANTE=E.ID_ESTUDIANTE
+            INNER JOIN PROVINCIA AS P
+            ON P.DESCRIPCION=E.PROVINCIA"""
+        return self._cCursorSql.execute(self._sentencia).fetchall()
+    #end method
+
     def consultar(self, tabla):
         self._sentencia = f"select * from '{tabla}'"
         return self._cCursorSql.execute(self._sentencia).fetchall()

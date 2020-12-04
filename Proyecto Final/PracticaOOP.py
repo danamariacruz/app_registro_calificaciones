@@ -91,15 +91,28 @@ class MyProgram:
         Label(filewin,text = "Notas por literales").place(x=10, y=30)
         Label(filewin,text = "Literal por provincia").place(x=10, y=70)
         Label(filewin,text = "Estudiantes por carrera").place(x=10, y=110)
+        photoLabel = Label(filewin)
+        photoLabel.place(x=10, y=150)
+        
+        def setPhotoLabel(imagen):
+            img = ImageTk.PhotoImage(Image.open(imagen))
+            photoLabel.config(image=img)
+            photoLabel.photo = img
+        
         # Label(filewin, text="Literal").place(x=10,y=90)
         # CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=100,y=30)
         # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
         # CbBoxLiteral = ttk.Combobox(filewin,state='readonly', textvariable=idLitereal, values=['A','B','C','D','F','TODOS']).place(x=100,y=90)
-        botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1()).place(x=130, y=30)
+        botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1(setPhotoLabel)).place(x=130, y=30)
         botonReporteP=Button(filewin, text = "Generar", width= 14, command= lambda:self.greet()).place(x=130, y=70)
-        botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3()).place(x=150, y=110)
+        botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3(setPhotoLabel)).place(x=150, y=110)
+        
+        
+        
+        
+        
 
-        filewin.geometry("350x300")
+        filewin.geometry("550x500")
         filewin.mainloop()
     #end method
 
@@ -436,7 +449,7 @@ class MyProgram:
             messagebox.showinfo(title='Informacion', message='Seleccione los campos.')
     #end method
 
-    def reportG3(self):
+    def reportG3(self,setPhotoLabel):
         values = self._database.estudianteByCarrera()
         # values=[(1, 'Ingeniería de software'), (2, 'Ingeniería industrial')]
         value=[]
@@ -448,9 +461,10 @@ class MyProgram:
         # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
         data=['pastel',value,legend,'Estudiantes por carreras']
         report.get_reportG(data)
+        setPhotoLabel("pastel.png")
     #end method
 
-    def reportG1(self):
+    def reportG1(self, setPhotoLabel):
         n = self._database.consultar('CALIFICACIONES')
         letras ={'A':0,'B':0,'C':0,'D':0,'F':0}
         for i in n:
@@ -466,6 +480,8 @@ class MyProgram:
         legend=[letras[i] for i in letras]
         data=['barra',value,legend,'Notas por literal','Literal','Cantidad']
         report.get_reportG(data)
+        setPhotoLabel("barra.png")
+        
     #end method
 
     #  def reportG2(self):

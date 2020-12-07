@@ -87,7 +87,11 @@ class MyProgram:
 
     def reporteControlG(self):
         filewin = Toplevel(self._master)
-
+        
+        idprovincia = StringVar()
+        CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idprovincia, values=self.get_dataCombo('PROVINCIA')).place(x=170,y=71)
+        
+        
         Label(filewin,text = "Notas por literales").place(x=10, y=30)
         Label(filewin,text = "Literal por provincia").place(x=10, y=70)
         Label(filewin,text = "Estudiantes por carrera").place(x=10, y=110)
@@ -103,9 +107,9 @@ class MyProgram:
         # CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=100,y=30)
         # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
         # CbBoxLiteral = ttk.Combobox(filewin,state='readonly', textvariable=idLitereal, values=['A','B','C','D','F','TODOS']).place(x=100,y=90)
-        botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1(setPhotoLabel)).place(x=130, y=30)
-        botonReporteP=Button(filewin, text = "Generar", width= 14, command= lambda:self.greet()).place(x=130, y=70)
-        botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3(setPhotoLabel)).place(x=150, y=110)
+        botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1(setPhotoLabel)).place(x=170, y=30)
+        botonReporteP=Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG2(idprovincia.get(), setPhotoLabel)).place(x=380, y=69)
+        botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3(setPhotoLabel)).place(x=170, y=110)
         
         
         
@@ -484,23 +488,30 @@ class MyProgram:
         
     #end method
 
-    #  def reportG2(self):
-    #     n = self._database.literalesByProvincia()
-    #     letras = {'A':0,'B':0,'C':0,'D':0,'F':0}
-    #     for i in n:
-    #         nota = Notas([i[3],i[4],i[5],i[6],i[7],i[8],i[9]])
-    #         cal = Calculo(nota)
-    #         for f in letras:
-    #             if f==cal.get_literal():
-    #                 letras[f]=letras[f]+1
-    #     print(letras)
-    #     report = Reporte('20202020')
-    #     # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
-    #     value=[i for i in letras]
-    #     legend=[letras[i] for i in letras]
-    #     data=['barra',value,legend,'Notas por literal','Literal','Cantidad']
-    #     report.get_reportG(data)
-    # #end method
+    def reportG2(self, idProvincia,setPhotoLabel):
+        if(idProvincia):
+            n = self._database.literalesByProvincia()
+            letras = {'A':0,'B':0,'C':0,'D':0,'F':0}
+            for i in n:
+                if(i[10] == idProvincia):
+                    nota = Notas([i[3],i[4],i[5],i[6],i[7],i[8],i[9]])
+                    cal = Calculo(nota)
+                    for f in letras:
+                        if f==cal.get_literal():
+                            letras[f]=letras[f]+1
+            print(letras)
+            report = Reporte('20202020')
+             # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
+            value=[i for i in letras]
+            legend=[letras[i] for i in letras]
+            data=['barra',value,legend,f'Notas en {idProvincia}','Literal','Cantidad']
+            report.get_reportG(data)
+            setPhotoLabel("barra.png")
+        else:
+            messagebox.showinfo(title='Informacion', message='Seleccione una provincia')
+        
+        
+     #end method
 
 #end class
 

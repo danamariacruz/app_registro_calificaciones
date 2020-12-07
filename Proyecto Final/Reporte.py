@@ -190,5 +190,20 @@ class Reporte:
             self._ax.legend(labels=values[2])
             plt.savefig('pastel.png')
             plt.show()
+        elif values[0]=="Comparativo":
+            graph1 = values[1]
+            graph2 = values[2]
+            fig = plt.gcf()
+            fig.suptitle(values[3], fontsize=14)
+            plt.subplot(1,2,1)
+            plt.pie(graph1[1],autopct="%1.1f%%",)
+            plt.title(values[4][0])
+            plt.legend(labels=graph1[0])
+            plt.subplot(1,2,2)
+            plt.title(values[4][1])
+            plt.pie(graph2[1],autopct="%1.1f%%",)
+            plt.legend(labels=graph2[0])
+            plt.savefig('Comparativo.png')
+            plt.show()
     #end method
 #end class

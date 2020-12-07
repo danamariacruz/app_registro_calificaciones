@@ -21,6 +21,27 @@ class Reporte:
         return today.strftime("%m/%d/%Y")
     #end methd
 
+    def fotoEstudiante(self, cedula):
+       if(cedula != ""):
+            respuestaServicio = Services(cedula).get_datos()
+            #manejo de service fail
+            print('aqui', respuestaServicio)
+            if respuestaServicio['ok']!=False:
+                if "Cedula" in respuestaServicio:
+                    print(respuestaServicio["foto"])
+                    self._imgfile = respuestaServicio["foto"]
+                    raw_data = urllib.request.urlopen(self._imgfile).read()
+                    img = Image.open(io.BytesIO(raw_data))
+                    photo =  ImageTk.PhotoImage(img)
+
+                    print(photo)
+                    return '<div style="text-align:center; font-size:200px;">{literal}</div>'
+
+            else:
+                messagebox.showinfo(title='Informacion', message='Ha ocurrido un error, intente otra cedula.') 
+
+    #end method 
+
     def literalhtml(self, literal):
         htmlLiteral = self.html_literalColor("A","#0070c0")
         if(literal == "B"):
@@ -104,6 +125,7 @@ class Reporte:
 
     def get_report(self):
         actualDate = self.get_Date()
+        fotoEstudiante = self.fotoEstudiante(self._estudiante[4])
         calificacion = ""
         for cal in self._calificaiones:
             calificacion = calificacion + self.generateCalificationsRow(cal)
@@ -127,7 +149,12 @@ class Reporte:
         width:33.33333%;
         text-align:right; font-size:25px;">Fecha: {actualDate}</p>
         </div>
-        
+        <div style="">
+            <p style="float: left;
+        width:33.33333%;
+        text-align:right; font-size:25px;"> {fotoEstudiante} </p>
+        </div>
+
         <table style="width:100%">
         <tr>
             <th><div style="color: #0070c0; font-size:30px; font-family: Calibri">Matrícula</div></th>

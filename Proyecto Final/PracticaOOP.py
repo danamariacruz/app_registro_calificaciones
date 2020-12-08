@@ -88,15 +88,23 @@ class MyProgram:
     def reporteControlG(self):
         filewin = Toplevel(self._master)
         
-        idprovincia = StringVar()
-        CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idprovincia, values=self.get_dataCombo('PROVINCIA')).place(x=170,y=71)
+        idprovinciaBarra = StringVar()
+        idprovinciaComp1 = StringVar()
+        idprovinciaComp2 = StringVar()
+        
+        
+        ttk.Combobox(filewin, state='readonly', textvariable=idprovinciaBarra, values=self.get_dataCombo('PROVINCIA')).place(x=170,y=71)
+        ttk.Combobox(filewin, state='readonly', textvariable=idprovinciaComp1, values=self.get_dataCombo('PROVINCIA')).place(x=10,y=190)
+        ttk.Combobox(filewin, state='readonly', textvariable=idprovinciaComp2, values=self.get_dataCombo('PROVINCIA')).place(x=230,y=190)
         
         
         Label(filewin,text = "Notas por literales").place(x=10, y=30)
         Label(filewin,text = "Literal por provincia").place(x=10, y=70)
         Label(filewin,text = "Estudiantes por carrera").place(x=10, y=110)
+        Label(filewin,text = "Comparativo por provincia").place(x=10, y=150)
         photoLabel = Label(filewin)
-        photoLabel.place(x=10, y=150)
+        photoLabel.place(x=10, y=230)
+        
         def setPhotoLabel(imagen):
             img = ImageTk.PhotoImage(Image.open(imagen))
             photoLabel.config(image=img)
@@ -106,15 +114,15 @@ class MyProgram:
         # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
         # CbBoxLiteral = ttk.Combobox(filewin,state='readonly', textvariable=idLitereal, values=['A','B','C','D','F','TODOS']).place(x=100,y=90)
         botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1(setPhotoLabel)).place(x=170, y=30)
-        botonReporteP=Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG2(idprovincia.get(), setPhotoLabel)).place(x=380, y=69)
+        botonReporteP=Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG2(idprovinciaBarra.get(), setPhotoLabel)).place(x=380, y=67)
         botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3(setPhotoLabel)).place(x=170, y=110)
-        
+        botonReporteComp =Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG4(idprovinciaComp1.get(),idprovinciaComp2.get(),setPhotoLabel)).place(x=440, y=186)
         
         
         
         
 
-        filewin.geometry("550x500")
+        filewin.geometry("600x550")
         filewin.mainloop()
     #end method
 
@@ -489,24 +497,41 @@ class MyProgram:
     def reportG2(self, idProvincia,setPhotoLabel):
         if(idProvincia):
             n = self._database.literalesByProvincia()
-            letras = {'A':0,'B':0,'C':0,'D':0,'F':0}
-            for i in n:
-                if(i[10] == idProvincia):
-                    nota = Notas([i[3],i[4],i[5],i[6],i[7],i[8],i[9]])
-                    cal = Calculo(nota)
-                    for f in letras:
-                        if f==cal.get_literal():
-                            letras[f]=letras[f]+1
-            print(letras)
+            graphData = self.filterLiteralsByProvince(idProvincia, n)
             report = Reporte('20202020')
-             # values=['tipo',[0,2,4],['juan','pedro'],'title','colum','values']
-            value=[i for i in letras]
-            legend=[letras[i] for i in letras]
-            data=['barra',value,legend,f'Notas en {idProvincia}','Literal','Cantidad']
+            data=['barra',graphData[0],graphData[1],f'Notas en {idProvincia}','Literal','Cantidad']
             report.get_reportG(data)
             setPhotoLabel("barra.png")
         else:
             messagebox.showinfo(title='Informacion', message='Seleccione una provincia')
+        
+        
+     #end method
+    def filterLiteralsByProvince(self, idProvincia, grade):
+         letras = {'A':0,'B':0,'C':0,'D':0,'F':0}
+         for i in grade:
+             if(i[10] == idProvincia):
+                 nota = Notas([i[3],i[4],i[5],i[6],i[7],i[8],i[9]])
+                 cal = Calculo(nota)
+                 for f in letras:
+                     if f==cal.get_literal():
+                         letras[f]=letras[f]+1
+         value=[i for i in letras]
+         legend=[letras[i] for i in letras]
+         return [value,legend]
+     
+    def reportG4(self, idProvincia1,idProvincia2,setPhotoLabel):
+        if(idProvincia1 and idProvincia2):
+            values = self._database.literalesByProvincia()
+            graphData1 = self.filterLiteralsByProvince(idProvincia1,values)
+            graphData2 = self.filterLiteralsByProvince(idProvincia2,values)
+            provincias = [idProvincia1,idProvincia2]
+            report = Reporte('20202020')
+            data=['Comparativo',graphData1,graphData2,'Grafico Comparativo', provincias]
+            report.get_reportG(data)
+            setPhotoLabel("Comparativo.png")
+        else:
+            messagebox.showinfo(title='Informacion', message='Seleccione las provincias')
         
         
      #end method

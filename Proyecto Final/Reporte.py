@@ -184,11 +184,11 @@ class Reporte:
             self._ax.set_ylabel(values[5])
             self._ax.bar(values[1],values[2],color=['blue','green', 'yellow','pink','red',])
             plt.savefig('barra.png')
-            plt.show()
+            # plt.show()
         elif values[0]=="pastel":
             self._ax.pie(values[1],autopct="%1.1f%%",)
             self._ax.legend(labels=values[2])
             plt.savefig('pastel.png')
-            plt.show()
+            # plt.show()
     #end method
 #end class

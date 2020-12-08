@@ -93,12 +93,10 @@ class MyProgram:
         Label(filewin,text = "Estudiantes por carrera").place(x=10, y=110)
         photoLabel = Label(filewin)
         photoLabel.place(x=10, y=150)
-        
         def setPhotoLabel(imagen):
             img = ImageTk.PhotoImage(Image.open(imagen))
             photoLabel.config(image=img)
             photoLabel.photo = img
-        
         # Label(filewin, text="Literal").place(x=10,y=90)
         # CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=100,y=30)
         # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
@@ -106,12 +104,6 @@ class MyProgram:
         botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1(setPhotoLabel)).place(x=130, y=30)
         botonReporteP=Button(filewin, text = "Generar", width= 14, command= lambda:self.greet()).place(x=130, y=70)
         botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3(setPhotoLabel)).place(x=150, y=110)
-        
-        
-        
-        
-        
-
         filewin.geometry("550x500")
         filewin.mainloop()
     #end method

@@ -114,7 +114,8 @@ class MyProgram:
         # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)
         # CbBoxLiteral = ttk.Combobox(filewin,state='readonly', textvariable=idLitereal, values=['A','B','C','D','F','TODOS']).place(x=100,y=90)
         botonReporteL=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG1(setPhotoLabel)).place(x=170, y=30)
-        botonReporteP=Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG2(idprovinciaBarra.get(), setPhotoLabel)).place(x=380, y=67)
+        botonReporteP=Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG2(idprovinciaBarra.get(), setPhotoLabel)).place(x=330, y=67)
+        botonReporteP3d=Button(filewin, text = "Generar en 3D", width= 10, command= lambda:self.reportG5(idprovinciaBarra.get(), setPhotoLabel)).place(x=420, y=67)
         botonReporteC=Button(filewin, text = "Generar", width= 14, command= lambda:self.reportG3(setPhotoLabel)).place(x=170, y=110)
         botonReporteComp =Button(filewin, text = "Generar", width= 10, command= lambda:self.reportG4(idprovinciaComp1.get(),idprovinciaComp2.get(),setPhotoLabel)).place(x=440, y=186)
         
@@ -493,6 +494,20 @@ class MyProgram:
         setPhotoLabel("barra.png")
         
     #end method
+    
+    def reportG5(self, idProvincia,setPhotoLabel):
+        if(idProvincia):
+            n = self._database.literalesByProvincia()
+            graphData = self.filterLiteralsByProvince(idProvincia, n)
+            report = Reporte('20202020')
+            data=['barra3D',graphData[0],graphData[1],f'Notas en {idProvincia}','Literal','Cantidad']
+            report.get_reportG(data)
+            setPhotoLabel("barra3D.png")
+        else:
+            messagebox.showinfo(title='Informacion', message='Seleccione una provincia')
+        
+        
+     #end method
 
     def reportG2(self, idProvincia,setPhotoLabel):
         if(idProvincia):

@@ -156,6 +156,17 @@ class Data:
             ON P.DESCRIPCION=E.PROVINCIA"""
         return self._cCursorSql.execute(self._sentencia).fetchall()
     #end method
+    
+    def sacarMateria(self):
+        self._sentencia="""SELECT C.*, P.DESCRIPCION as PROVINCIA, M.NOMBRE_MATERIA from ESTUDIANTE AS E
+            inner join CALIFICACIONES AS C
+            on C.ID_ESTUDIANTE=E.ID_ESTUDIANTE
+            INNER JOIN PROVINCIA AS P
+            ON P.DESCRIPCION=E.PROVINCIA 
+            inner join Materia as m
+            on M.CODIGO = C.ID_MATERIA"""
+        return self._cCursorSql.execute(self._sentencia).fetchall()
+    #end method
 
     def consultar(self, tabla):
         self._sentencia = f"select * from '{tabla}'"

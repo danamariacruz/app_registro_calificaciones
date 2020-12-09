@@ -204,7 +204,6 @@ class Reporte:
             self._ax.set_xticks(range(0,5,1))
             self._ax.set_xticklabels(values[1][::1])
             plt.savefig('barra3D.png')
-            
             plt.show()
         elif values[0]=="pastel":
             self._ax.pie(values[1],autopct="%1.1f%%",)

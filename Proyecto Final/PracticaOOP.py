@@ -109,7 +109,6 @@ class MyProgram:
             img = ImageTk.PhotoImage(Image.open(imagen))
             photoLabel.config(image=img)
             photoLabel.photo = img
-        
         # Label(filewin, text="Literal").place(x=10,y=90)
         # CbBoxEstudiante = ttk.Combobox(filewin, state='readonly', textvariable=idMateria, values=self.get_dataCombo('MATERIA')).place(x=100,y=30)
         # CbBoxProvincia = ttk.Combobox(filewin, state='readonly', textvariable=idProvincia, values=self.get_dataCombo('PROVINCIA')).place(x=100,y=60)

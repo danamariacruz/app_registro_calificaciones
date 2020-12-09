@@ -189,7 +189,7 @@ class Reporte:
             self._ax.set_ylabel(values[5])
             self._ax.bar(values[1],values[2],color=['blue','green', 'yellow','pink','red',])
             plt.savefig('barra.png')
-            plt.show()
+            # plt.show()
         elif values[0]=='barra3D':
             self._ax = plt.subplot(111,projection= "3d")
             self._ax.set_xlabel(values[4])
@@ -204,7 +204,7 @@ class Reporte:
             self._ax.set_xticks(range(0,5,1))
             self._ax.set_xticklabels(values[1][::1])
             plt.savefig('barra3D.png')
-            plt.show()
+            # plt.show()
         elif values[0]=="pastel":
             self._ax.pie(values[1],autopct="%1.1f%%",)
             self._ax.legend(labels=values[2])
@@ -224,6 +224,6 @@ class Reporte:
             plt.pie(graph2[1],autopct="%1.1f%%",)
             plt.legend(labels=graph2[0])
             plt.savefig('Comparativo.png')
-            plt.show()
+            # plt.show()
     #end method
 #end class

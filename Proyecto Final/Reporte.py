@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 from Data import Data
 from Calculo import Calculo
 from Notas import Notas
+from mpl_toolkits.mplot3d import axes3d
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Reporte:
     def __init__(self, matricula):
@@ -13,7 +16,9 @@ class Reporte:
         self._estudiante = self._database.consultarById('ESTUDIANTE','ID_ESTUDIANTE',matricula)
         self._calificaiones = self._database.calificacionByEstudiante(matricula)
         self._date = date.today()
+        
         self._fig, self._ax = plt.subplots()
+        
     #end method
 
     def get_Date(self):
@@ -184,6 +189,22 @@ class Reporte:
             self._ax.set_ylabel(values[5])
             self._ax.bar(values[1],values[2],color=['blue','green', 'yellow','pink','red',])
             plt.savefig('barra.png')
+            plt.show()
+        elif values[0]=='barra3D':
+            self._ax = plt.subplot(111,projection= "3d")
+            self._ax.set_xlabel(values[4])
+            self._ax.set_ylabel(values[5])
+            x = np.arange(len(values[1]))
+            y = [0,0,0,0,0]
+            z = [0,0,0,0,0]
+            dx = [1,1,1,1,1]
+            dy = [1,1,1,1,1]
+            dz = values[2]
+            self._ax.bar3d(x,y,z,dx,dy,dz,color=['blue','green', 'yellow','pink','red',])
+            self._ax.set_xticks(range(0,5,1))
+            self._ax.set_xticklabels(values[1][::1])
+            plt.savefig('barra3D.png')
+            
             plt.show()
         elif values[0]=="pastel":
             self._ax.pie(values[1],autopct="%1.1f%%",)
